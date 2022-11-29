@@ -1,7 +1,10 @@
+import { MainWindowComponent } from './main-window/main-window.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [];
+const routes: Routes = [
+  { path: '', component: MainWindowComponent}
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

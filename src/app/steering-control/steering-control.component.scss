@@ -1,0 +1,51 @@
+// We need to use ::ng-deep to overcome view encapsulation
+::ng-deep {
+    .steering-slider .ngx-slider .ngx-slider-bar {
+      background: #ffe4d1;
+      height: 4px;
+    }
+    .steering-slider .ngx-slider .ngx-slider-selection {
+      background: orange;
+    }
+  
+    .steering-slider .ngx-slider .ngx-slider-pointer {
+      top: auto; /* to remove the default positioning */
+      width: 3rem;
+      height: 3rem;
+      background-color: orange;
+      border-radius: 2rem;
+      bottom: calc(-1.5rem + 2px) !important;
+    }
+
+    .ngx-slider .ngx-slider-bubble.ngx-slider-limit {
+      color: orange !important;
+    }
+  
+    .steering-slider .ngx-slider .ngx-slider-pointer:after {
+      display: none;
+    }
+  
+    .steering-slider .ngx-slider .ngx-slider-bubble {
+      bottom: 50px;
+      color: orange !important;
+    }
+  
+    .steering-slider .ngx-slider .ngx-slider-limit {
+      font-weight: bold;
+      color: orange;
+    }
+  
+    .steering-slider .ngx-slider .ngx-slider-tick {
+      width: 1px;
+      height: 10px;
+      margin-left: 4px;
+      border-radius: 0;
+      background: orange;
+      top: -1px;
+    }
+  
+    .steering-slider .ngx-slider .ngx-slider-tick.ngx-slider-selected {
+      background: orange;
+    }
+  }
+  
