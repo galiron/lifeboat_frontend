@@ -10,6 +10,9 @@ export interface WSjwtReply extends WSReply{
 export interface WSFeedDogRequest extends WSReply{
 }
 
+export interface WSconnectionTerminated extends WSReply{
+}
+
 export function messageIsOfInterface(message: any, interfaceName: string){
     if(message){
         if(message.interfaceType == interfaceName){
