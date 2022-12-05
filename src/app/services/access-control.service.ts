@@ -26,19 +26,12 @@ export class AccessControlService {
     return {
       "secretKey": secretKey
     }
-    // this.http.post('http://localhost:3000/takeControl', postData).subscribe(res => {
-    //   console.log(res);
-    //   this.jwt = res.toString();
-    // });
   }
 
   releaseControl() {
     return {
       "jwt": this.jwt
     }
-    // this.http.post('http://localhost:3000/releaseControl', postData).subscribe(res => {
-    //   console.log(res);
-    // });
   }
 
   feedWatchdog() {
