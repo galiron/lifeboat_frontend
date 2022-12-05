@@ -1,4 +1,4 @@
-import { messageIsOfInterface, WSFeedDogRequest, WSjwtReply, WSReply } from './../interfaces/wsInterfaces';
+import { messageIsOfInterface, WSFeedDogRequest, WSJwtReply, WSReply } from './../interfaces/wsInterfaces';
 import { AccessControlService } from './../services/access-control.service';
 import { WebsocketService } from './../services/websocket.service';
 import { Component, OnInit } from '@angular/core';
@@ -14,8 +14,8 @@ export class MainWindowComponent implements OnInit {
   constructor(private websocketService: WebsocketService, private accessControlService: AccessControlService) {
     this.websocketService.subject.next({api:'lock', data: accessControlService.claimControl(), interfaceType: "secretKey"});
     websocketService.subject.subscribe((untypedMsg) => {
-      if (messageIsOfInterface(untypedMsg,"WSjwtReply")) {
-        const msg = (untypedMsg as WSjwtReply)
+      if (messageIsOfInterface(untypedMsg,"WSJwtReply")) {
+        const msg = (untypedMsg as WSJwtReply)
         console.log(msg)
         if(this.accessControlService.jwt === "" && msg.jwt != ""){
           this.accessControlService.jwt = msg.jwt;
@@ -33,22 +33,22 @@ export class MainWindowComponent implements OnInit {
       }
       //console.log("Response from websocket: " + msg);
     });
-    // socket.on("WSjwtReply", (untypedMsg: any) => {
-    //   if (messageIsOfInterface(untypedMsg,"WSjwtReply")) {
-    //     const msg = (untypedMsg as WSjwtReply)
+    // socket.on("WSJwtReply", (untypedMsg: any) => {
+    //   if (messageIsOfInterface(untypedMsg,"WSJwtReply")) {
+    //     const msg = (untypedMsg as WSJwtReply)
     //     console.log(msg)
     //     if(this.accessControlService.jwt === ""){
     //       this.accessControlService.jwt = msg.jwt;
     //     }
     //   }
     // })
-    // socket.on("WSjwtReply", (untypedMsg: any) => {
+    // socket.on("WSJwtReply", (untypedMsg: any) => {
     //   if (messageIsOfInterface(untypedMsg,"WSReply")) {
     //     const msg = (untypedMsg as WSReply)
     //     console.log(msg)
     //   }
     // })
-    // socket.on("WSjwtReply", (untypedMsg: any) => {
+    // socket.on("WSJwtReply", (untypedMsg: any) => {
     //   const msg = (untypedMsg as WSFeedDogRequest)
     //   console.log(msg)
     //   socket.emit("feedWatchdog", this.accessControlService.feedWatchdog())

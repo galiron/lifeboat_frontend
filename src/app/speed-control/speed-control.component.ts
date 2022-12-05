@@ -1,5 +1,8 @@
-import { LabelType, Options } from '@angular-slider/ngx-slider';
+import { ControlService } from './../services/control.service';
+import { ChangeContext, LabelType, Options } from '@angular-slider/ngx-slider';
 import { Component, OnInit } from '@angular/core';
+import { AccessControlService } from '../services/access-control.service';
+import { WebsocketService } from '../services/websocket.service';
 
 @Component({
   selector: 'app-speed-control',
@@ -21,9 +24,12 @@ export class SpeedControlComponent implements OnInit {
     }
   };
 
-  constructor() { }
+  constructor(private controlService: ControlService) { }
 
   ngOnInit(): void {
   }
 
+  setThrottle(changeContext: ChangeContext): void {
+    this.controlService.sendThrottle(changeContext);
+  }
 }
