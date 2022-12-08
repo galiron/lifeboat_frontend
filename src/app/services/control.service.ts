@@ -16,7 +16,7 @@ export class ControlService {
       jwt: this.accessControlService.jwt,
       instruction
     }
-    this.websocketService.subject.next({api:'throttle', data, interfaceType: "WSThrottleRequest"});
+    this.websocketService.emit({api:'throttle', data, interfaceType: "WSThrottleRequest"});
   }
 
   sendSteering(changeContext: ChangeContext): void {
@@ -25,6 +25,6 @@ export class ControlService {
       jwt: this.accessControlService.jwt,
       instruction
     }
-    this.websocketService.subject.next({api:'steer', data, interfaceType: "WSSteeringRequest"});
+    this.websocketService.emit({api:'steer', data, interfaceType: "WSSteeringRequest"});
   }
 }
