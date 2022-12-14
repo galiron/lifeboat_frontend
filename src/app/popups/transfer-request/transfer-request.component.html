@@ -1,0 +1,13 @@
+<div style="display: flex; flex-flow: column;">
+    <div style="align-self: center;">
+        {{ requestName }} is requesting a control transfer
+    </div>
+    <div>
+        <div style="align-self: center;">
+            <button mat-button color="primary" (click)="grantAccess()">grant access</button>
+        </div>
+        <div style="align-self: center;">
+            <button mat-button color="warn" (click)="dismiss()">decline</button>
+        </div>
+    </div>
+</div>

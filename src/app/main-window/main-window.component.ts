@@ -1,8 +1,7 @@
-import { messageIsOfInterface, WSFeedDogRequest, WSJwtReply, WSReply } from './../interfaces/wsInterfaces';
 import { AccessControlService } from './../services/access-control.service';
-import { WebsocketService } from './../services/websocket.service';
 import { Component, OnInit } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { TransferRequestComponent } from '../popups/transfer-request/transfer-request.component';
 
 @Component({
   selector: 'app-main-window',
@@ -10,15 +9,55 @@ import { Socket } from 'ngx-socket-io';
   styleUrls: ['./main-window.component.scss']
 })
 export class MainWindowComponent implements OnInit {
-
-  constructor(private websocketService: WebsocketService, private accessControlService: AccessControlService) {
+  private processing = false;
+  constructor(private accessControlService: AccessControlService, public snackBar: MatSnackBar) {
     this.accessControlService.claimControl();
+    this.accessControlService.controlRequest$.subscribe( (data) => {
+      console.log("got sub")
+      if (this.processing === false) {
+        this.processing = true;
+        console.log("locked processing")
+        this.processRequester()
+      }
+    });
   }
 
   ngOnInit(): void {
   }
 
-  releaseControl() {
+  processRequester(){
+    this.accessControlService.popNextRequester();
+    console.log("next requester is: ", JSON.stringify(this.accessControlService.requesterInProgress))
+    if(this.accessControlService.requesterInProgress != undefined) {
+      const snackBar = this.snackBar.openFromComponent(TransferRequestComponent, {
+        data: {preClose: () => {
+          snackBar.dismiss()
+        } }
+      })
+      snackBar.afterDismissed().subscribe( () => {
+        this.processRequester();
+      });
+    } else {
+      this.processing = false;
+    }
+  }
 
+  releaseControl() {
+    this.accessControlService.controlRequester.append({
+      identifier: "test1",
+      name: "test1",
+      interfaceType :"test1"      
+    })
+    this.accessControlService.controlRequester.append({
+      identifier: "test2",
+      name: "test2",
+      interfaceType :"test2"      
+    })
+    this.accessControlService.controlRequester.append({
+      identifier: "test3",
+      name: "test3",
+      interfaceType :"test3"      
+    })
+    this.accessControlService.controlRequest$.next({});
   }
 }

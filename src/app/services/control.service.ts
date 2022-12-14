@@ -1,30 +1,20 @@
 import { AccessControlService } from './access-control.service';
-import { WebsocketService } from './websocket.service';
 import { ChangeContext } from '@angular-slider/ngx-slider';
 import { Injectable } from '@angular/core';
+import { WebsocketAPIService } from './websocket-api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ControlService {
 
-  constructor(private websocketService: WebsocketService, private accessControlService: AccessControlService) { }
+  constructor(private websocketAPIService: WebsocketAPIService, private accessControlService: AccessControlService) { }
 
   sendThrottle(changeContext: ChangeContext): void {
-    const instruction = { value : changeContext.value }
-    const data = {
-      jwt: this.accessControlService.jwt,
-      instruction
-    }
-    this.websocketService.emit({api:'throttle', data, interfaceType: "WSThrottleRequest"});
+    this.websocketAPIService.sendThrottle(changeContext.value);
   }
 
   sendSteering(changeContext: ChangeContext): void {
-    const instruction = { value : changeContext.value }
-    const data = {
-      jwt: this.accessControlService.jwt,
-      instruction
-    }
-    this.websocketService.emit({api:'steer', data, interfaceType: "WSSteeringRequest"});
+    this.websocketAPIService.sendSteering(changeContext.value);
   }
 }

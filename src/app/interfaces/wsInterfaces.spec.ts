@@ -1,45 +1,42 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { WSFeedDogRequest, messageIsOfInterface, WSConnectionTerminated, WSSteeringRequest, WSJwtReply, WSThrottleRequest, WSReply } from './wsInterfaces';
+import { WSFeedDogRequest, messageIsOfInterface, WSConnectionTerminated, WSSteeringRequest, WSThrottleRequest, WSMessage, WSJwtMessage } from './wsInterfaces';
 
 
 describe('WSInterfaces', () => {
 
   it('messageIsOfInterface', () => {
     const wSFeedDogRequestMessage: WSFeedDogRequest = {
-        success: true,
         interfaceType: "WSFeedDogRequest"
     }
     expect(messageIsOfInterface(wSFeedDogRequestMessage, "WSFeedDogRequest")).toBeTrue();
     const wSConnectionTerminated: WSConnectionTerminated = {
-        success: true,
         interfaceType: "WSConnectionTerminated"
     }
     expect(messageIsOfInterface(wSConnectionTerminated, "WSConnectionTerminated")).toBeTrue();
     const wSSteeringRequest: WSSteeringRequest = {
-        success: true,
+        jwt: "test",
+        instruction: {value:1},
         interfaceType: "WSSteeringRequest"
     }
     expect(messageIsOfInterface(wSSteeringRequest, "WSSteeringRequest")).toBeTrue();
     const wSThrottleRequest: WSThrottleRequest = {
-        success: true,
+        jwt: "test",
+        instruction: {value:1},
         interfaceType: "WSThrottleRequest"
     }
     expect(messageIsOfInterface(wSThrottleRequest, "WSThrottleRequest")).toBeTrue();
-    const wSJwtReply: WSJwtReply = {
-        success: true,
-        interfaceType: "WSJwtReply",
+    const wSJwtMessage: WSJwtMessage = {
+        interfaceType: "WSJwtMessage",
         jwt: "abc"
     }
-    expect(messageIsOfInterface(wSJwtReply, "WSJwtReply")).toBeTrue();
-    const wSReply: WSReply = {
-        success: true,
-        interfaceType: "WSReply"
+    expect(messageIsOfInterface(wSJwtMessage, "WSJwtMessage")).toBeTrue();
+    const wSMessage: WSMessage = {
+        interfaceType: "WSMessage"
     }
-    expect(messageIsOfInterface(wSReply, "WSReply")).toBeTrue();
-    const faultyMessage: WSReply = {
-        success: true,
+    expect(messageIsOfInterface(wSMessage, "WSMessage")).toBeTrue();
+    const faultyMessage: WSMessage = {
         interfaceType: "FaultMessage"
     }
-    expect(messageIsOfInterface(faultyMessage, "WSReply")).toBeFalse();
+    expect(messageIsOfInterface(faultyMessage, "WSMessage")).toBeFalse();
   });
 });

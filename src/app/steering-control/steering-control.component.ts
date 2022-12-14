@@ -1,6 +1,4 @@
 import { ControlService } from './../services/control.service';
-import { AccessControlService } from './../services/access-control.service';
-import { WebsocketService } from './../services/websocket.service';
 import { ChangeContext, LabelType, Options } from '@angular-slider/ngx-slider';
 import { Component, OnInit } from '@angular/core';
 

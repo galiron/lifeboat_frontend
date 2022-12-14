@@ -1,22 +1,47 @@
-export interface WSReply{
-    success: boolean;
+export interface WSMessage {
     interfaceType: string;
 }
 
-export interface WSJwtReply extends WSReply{
+export interface WSMessageResponse extends WSMessage{
+    success: boolean;
+}
+
+export interface WSJwtResponse extends WSMessageResponse{
     jwt: string;
 }
 
-export interface WSFeedDogRequest extends WSReply{
+export interface WSJwtMessage extends WSMessage{
+    jwt: string;
 }
 
-export interface WSConnectionTerminated extends WSReply{
+export interface WSFeedDogRequest extends WSMessage{
 }
 
-export interface WSSteeringRequest extends WSReply{
+export interface WSConnectionTerminated extends WSMessage{
 }
 
-export interface WSThrottleRequest extends WSReply{
+export interface WSLockReleaseResponse extends WSMessageResponse{
+}
+
+export interface WSControlTransfer extends WSMessage{
+    name: string;
+    identifier: string;
+}
+
+export interface WSControlTransferResponse extends WSJwtResponse{
+    identifier: string;
+}
+
+export interface WSThrottleRequest extends WSJwtMessage{
+    instruction: Instruction
+}
+
+export interface WSSteeringRequest extends WSJwtMessage{
+    instruction: Instruction
+}
+
+export interface Instruction {
+    value: number
 }
 
 /* Careful, this function is dumb and only checks the interfaceName

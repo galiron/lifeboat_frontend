@@ -1,8 +1,7 @@
-import { WebsocketService } from './websocket.service';
+import { WebsocketConnectorService } from './websocketConnector.service';
 import { fakeAsync, TestBed } from '@angular/core/testing';
 
 import { AccessControlService } from './access-control.service';
-import { ReplaySubject, Subscription } from 'rxjs';
 import { WebsocketMockService } from '../mocks/websocket-mock.service';
 
 describe('AccessControlService', () => {
@@ -42,7 +41,7 @@ describe('AccessControlServiceAsync', () => {
     wss = new WebsocketMockService();
     TestBed.configureTestingModule({
       providers: [
-        {provide: WebsocketService, useValue: wss}
+        {provide: WebsocketConnectorService, useValue: wss}
       ]
     });
     service = TestBed.inject(AccessControlService);
@@ -53,13 +52,13 @@ describe('AccessControlServiceAsync', () => {
     expect(service.jwt).toBe('');
     wss.subject.next({
       success: true,
-      interfaceType: "WSJwtReply",
+      interfaceType: "WSJwtResponse",
       jwt: "abc"
     });
     expect(service.jwt).toBe('abc');
     wss.subject.next({
       success: true,
-      interfaceType: "WSReply"
+      interfaceType: "WSMessage"
     });
     expect(service).toBeTruthy();
     wss.subject.next({

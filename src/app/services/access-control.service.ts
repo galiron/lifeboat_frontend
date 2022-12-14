@@ -1,7 +1,10 @@
-import { WebsocketService } from './websocket.service';
+import { WebsocketConnectorService } from './websocketConnector.service';
 
 import { Injectable } from '@angular/core';
-import { messageIsOfInterface, WSFeedDogRequest, WSJwtReply, WSReply } from '../interfaces/wsInterfaces';
+import { messageIsOfInterface, WSFeedDogRequest, WSMessage, WSControlTransfer } from '../interfaces/wsInterfaces';
+import { Subject } from 'rxjs';
+import { Queue } from 'queue-typescript';
+import { WebsocketAPIService } from './websocket-api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,22 +14,24 @@ export class AccessControlService {
   jwt = '';
   possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,./;'[]\=-)(*&^%$#@!~`";
   lengthOfCode = 40;
+  controlRequest$ = new Subject();
+  controlRequester = new Queue<WSControlTransfer>();
+  requesterInProgress?: WSControlTransfer | undefined;
+  
 
-  constructor(private websocketService: WebsocketService) {
-    websocketService.subject.subscribe((untypedMsg) => {
+  constructor(private websocketAPIService: WebsocketAPIService) {
+    websocketAPIService.getSocketSubject().subscribe((untypedMsg) => {
       try{
-        if (messageIsOfInterface(untypedMsg,"WSJwtReply")) {
-          const msg = (untypedMsg as WSJwtReply)
-          if(this.jwt === "" && msg.jwt != "") {
-            this.jwt = msg.jwt;
-          }
+        if (messageIsOfInterface(untypedMsg,"WSMessage")) {
+          const msg = (untypedMsg as WSMessage)
         }
-        if (messageIsOfInterface(untypedMsg,"WSReply")) {
-          const msg = (untypedMsg as WSReply)
-        }
-        if (messageIsOfInterface(untypedMsg,"WSFeedDogRequest")) {
+        if (messageIsOfInterface(untypedMsg, "WSFeedDogRequest")) {
           const msg = (untypedMsg as WSFeedDogRequest)
           this.feedWatchdog();
+        }
+        if (messageIsOfInterface(untypedMsg, "WSControlTransfer")) {
+          const msg = (untypedMsg as WSControlTransfer)
+          this.controlRequester.append(msg);
         }
       } catch(err: any) {
         console.log(err)
@@ -34,7 +39,26 @@ export class AccessControlService {
     });
    }
 
-  makeRandom(lengthOfCode: number, possible: string) {
+  popNextRequester(){
+    if(this.controlRequester.length > 0){
+      this.requesterInProgress = this.controlRequester.dequeue();
+    } else{
+      this.requesterInProgress = undefined;
+    }
+  }
+
+  transferControl() {
+    let requester = this.requesterInProgress
+    if (requester) {
+      this.websocketAPIService.transferControl(requester.identifier);
+    } else {
+      this.websocketAPIService.transferControl(undefined);
+    }
+    this.requesterInProgress = undefined;
+    this.controlRequester = new Queue<WSControlTransfer>();
+  }
+
+  private makeRandom(lengthOfCode: number, possible: string) {
     let text = "";
     for (let i = 0; i < lengthOfCode; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -44,29 +68,14 @@ export class AccessControlService {
 
   claimControl() {
     let secretKey = this.makeRandom(this.lengthOfCode, this.possible);
-    this.websocketService.subject.next({
-      api:'lock',
-      data: {
-        "secretKey": secretKey
-      },
-      interfaceType: "secretKey"});
+    this.websocketAPIService.claimLock(secretKey);
   }
 
   releaseControl() {
-    this.websocketService.subject.next({
-      api:'unlock',
-      data: {
-        "jwt": this.jwt
-      },
-      interfaceType: "secretKey"});
+    this.websocketAPIService.releaseLock();
   }
 
   feedWatchdog() {
-    this.websocketService.subject.next({
-      api:'feedWatchdog',
-      data: {
-        "jwt": this.jwt
-      },
-      interfaceType: "watchdogResponse"});
+    this.websocketAPIService.feedWatchdog();
   }
 }
