@@ -44,6 +44,15 @@ export interface Instruction {
     value: number
 }
 
+export interface WSRequestControlTransferToBackend extends WSMessage{
+    name: string
+}
+
+export interface WSRequestControlTransferToClient extends WSMessage{
+    identifier: string;
+    name: string
+}
+
 /* Careful, this function is dumb and only checks the interfaceName
    that gets send! Make sure to not use the wrong interfaceName for the
    belonging data on the backend !!! */

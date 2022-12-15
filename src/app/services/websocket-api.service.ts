@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WebSocketSubject } from 'rxjs/webSocket';
-import { Instruction, messageIsOfInterface, WSControlTransferResponse, WSJwtMessage, WSLockReleaseResponse, WSSteeringRequest, WSThrottleRequest } from '../interfaces/wsInterfaces';
+import { Instruction, messageIsOfInterface, WSControlTransferResponse, WSJwtMessage, WSLockReleaseResponse, WSRequestControlTransferToBackend, WSSteeringRequest, WSThrottleRequest } from '../interfaces/wsInterfaces';
 import { WebsocketConnectorService } from './websocketConnector.service';
 
 @Injectable({
@@ -82,6 +82,15 @@ export class WebsocketAPIService {
       interfaceType: "JWTResponse"
     }
     this.websocketConnectorService.emit({api:'unlock', data, interfaceType: "JWTResponse"});
+  }
+
+  requestControlTransfer() {
+    
+    const data: WSRequestControlTransferToBackend = {
+      name: "this.jwt", // replace jwt with human readable names
+      interfaceType: "WSRequestControlTransfer"
+    }
+    this.websocketConnectorService.emit({api:'requestControlTransfer', data, interfaceType: "WSRequestControlTransferToBackend"});
   }
 
   feedWatchdog(){

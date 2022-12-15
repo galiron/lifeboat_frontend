@@ -1,7 +1,7 @@
 import { WebsocketConnectorService } from './websocketConnector.service';
 
 import { Injectable } from '@angular/core';
-import { messageIsOfInterface, WSFeedDogRequest, WSMessage, WSControlTransfer } from '../interfaces/wsInterfaces';
+import { messageIsOfInterface, WSFeedDogRequest, WSMessage, WSControlTransfer, WSRequestControlTransferToClient } from '../interfaces/wsInterfaces';
 import { Subject } from 'rxjs';
 import { Queue } from 'queue-typescript';
 import { WebsocketAPIService } from './websocket-api.service';
@@ -29,9 +29,10 @@ export class AccessControlService {
           const msg = (untypedMsg as WSFeedDogRequest)
           this.feedWatchdog();
         }
-        if (messageIsOfInterface(untypedMsg, "WSControlTransfer")) {
-          const msg = (untypedMsg as WSControlTransfer)
+        if (messageIsOfInterface(untypedMsg, "WSRequestControlTransferToClient")) {
+          const msg = (untypedMsg as WSRequestControlTransferToClient)
           this.controlRequester.append(msg);
+          this.controlRequest$.next({});
         }
       } catch(err: any) {
         console.log(err)
@@ -64,6 +65,10 @@ export class AccessControlService {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
       return text;
+  }
+
+  requestControlTransfer() {
+    this.websocketAPIService.requestControlTransfer()
   }
 
   claimControl() {

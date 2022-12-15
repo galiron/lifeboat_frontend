@@ -43,21 +43,9 @@ export class MainWindowComponent implements OnInit {
   }
 
   releaseControl() {
-    this.accessControlService.controlRequester.append({
-      identifier: "test1",
-      name: "test1",
-      interfaceType :"test1"      
-    })
-    this.accessControlService.controlRequester.append({
-      identifier: "test2",
-      name: "test2",
-      interfaceType :"test2"      
-    })
-    this.accessControlService.controlRequester.append({
-      identifier: "test3",
-      name: "test3",
-      interfaceType :"test3"      
-    })
-    this.accessControlService.controlRequest$.next({});
+    this.accessControlService.releaseControl();
+  }
+  requestControl() {
+    this.accessControlService.requestControlTransfer();
   }
 }
