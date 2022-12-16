@@ -23,15 +23,9 @@ export class WebsocketConnectorService {
   wsControlAssignment$ = new Subject<WSControlAssignment>();
 
   constructor() {
-    this.socket.on("WSJwtMessage", (untypedData: any) => {
-      try {
-        this.wsJwtResponse$.next(JSON.parse(untypedData));
-      } catch(err: any){
-        console.log(err)
-      }
-    });
     this.socket.on("WSControlAssignment", (untypedData: any) => {
       try {
+        console.log("new assignment incoming: ",JSON.parse(untypedData))
         this.wsControlAssignment$.next(JSON.parse(untypedData));
       } catch(err: any){
         console.log(err)
@@ -68,8 +62,7 @@ export class WebsocketConnectorService {
   }
 
   emit(api: string, data: any): void {
-    console.log("request api: ", api)
-    console.log("request data: ", data)
+    console.log("request api and data: ", api, data)
     this.socket.emit(api, data)
   }
 }

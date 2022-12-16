@@ -38,6 +38,22 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit("transferControl", data);
   }
 
+  declineControl(identifier: string | undefined) {
+    let success = false;
+    if(identifier) {
+      success = true;
+    } else {
+      identifier = ""
+    }
+    const data: WSControlTransferResponse = {
+      success,
+      jwt: this.jwt,
+      identifier,
+      interfaceType: "WSControlTransferResponse"
+    }
+    this.websocketConnectorService.emit("transferControlDeclined", data);
+  }
+
   sendThrottle(value: number) {
     const instruction: Instruction = { value }
     const data: WSThrottleRequest = {

@@ -46,6 +46,15 @@ export class AccessControlService {
     }
   }
 
+  declineControl(){
+    let requester = this.requesterInProgress
+    if (requester) {
+      this.websocketAPIService.transferControl(requester.identifier);
+    } else {
+      this.websocketAPIService.transferControl(undefined);
+    }
+  }
+
   transferControl() {
     let requester = this.requesterInProgress
     if (requester) {
