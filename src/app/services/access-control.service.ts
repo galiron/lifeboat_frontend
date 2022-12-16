@@ -11,32 +11,30 @@ import { WebsocketAPIService } from './websocket-api.service';
 })
 export class AccessControlService {
 
-  jwt = '';
   possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,./;'[]\=-)(*&^%$#@!~`";
   lengthOfCode = 40;
   controlRequest$ = new Subject();
-  controlRequester = new Queue<WSControlTransfer>();
-  requesterInProgress?: WSControlTransfer | undefined;
+  controlRequester = new Queue<WSRequestControlTransferToClient>();
+  requesterInProgress?: WSRequestControlTransferToClient | undefined;
+  secretKey: string = "";
   
 
-  constructor(private websocketAPIService: WebsocketAPIService) {
-    websocketAPIService.getSocketSubject().subscribe((untypedMsg) => {
-      try{
-        if (messageIsOfInterface(untypedMsg,"WSMessage")) {
-          const msg = (untypedMsg as WSMessage)
-        }
-        if (messageIsOfInterface(untypedMsg, "WSFeedDogRequest")) {
-          const msg = (untypedMsg as WSFeedDogRequest)
-          this.feedWatchdog();
-        }
-        if (messageIsOfInterface(untypedMsg, "WSRequestControlTransferToClient")) {
-          const msg = (untypedMsg as WSRequestControlTransferToClient)
-          this.controlRequester.append(msg);
+  constructor(private websocketAPIService: WebsocketAPIService, private websocketConnectorService: WebsocketConnectorService) {
+    websocketConnectorService.wsMessage$.subscribe((data) => {
+    });
+    websocketConnectorService.wsRequestControlTransferToClient$.subscribe((data) => {
+          this.controlRequester.append(data);
           this.controlRequest$.next({});
-        }
-      } catch(err: any) {
-        console.log(err)
+    });
+    websocketConnectorService.wsFeedDogRequest$.subscribe((data) => {
+      this.feedWatchdog();
+    });
+    websocketConnectorService.wsControlAssignment$.subscribe((data) => {
+      console.log("subscibe lock", data.jwt)
+      if (data.jwt != ""){
+        this.websocketAPIService.jwt = data.jwt
       }
+      console.log("jwt is now: ", this.websocketAPIService.jwt)
     });
    }
 
@@ -68,12 +66,14 @@ export class AccessControlService {
   }
 
   requestControlTransfer() {
-    this.websocketAPIService.requestControlTransfer()
+    this.websocketAPIService.requestControlTransfer(this.secretKey)
   }
 
   claimControl() {
-    let secretKey = this.makeRandom(this.lengthOfCode, this.possible);
-    this.websocketAPIService.claimLock(secretKey);
+    if (this.secretKey == "") {
+       this.secretKey = this.makeRandom(this.lengthOfCode, this.possible);
+    }
+    this.websocketAPIService.claimLock(this.secretKey);
   }
 
   releaseControl() {

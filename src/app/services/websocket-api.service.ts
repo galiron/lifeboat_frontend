@@ -10,30 +10,17 @@ export class WebsocketAPIService {
   jwt = ''; // api requests need jwt
 
   constructor(private websocketConnectorService: WebsocketConnectorService) {
-    this.websocketConnectorService.getSubsciption().subscribe((untypedMsg) => {
-      try{
-        if (messageIsOfInterface(untypedMsg,"WSJwtMessage")) {
-          const msg = (untypedMsg as WSJwtMessage)
-          if(this.jwt === "" && msg.jwt != "") {
-            this.jwt = msg.jwt;
-          }
+    this.websocketConnectorService.wsJwtResponse$.subscribe((msg) => {
+        if(this.jwt === "" && msg.jwt != "") {
+          this.jwt = msg.jwt;
         }
-        if (messageIsOfInterface(untypedMsg,"WSLockReleaseResponse")) {
-          const msg = (untypedMsg as WSLockReleaseResponse)
-          if(msg.success) {
-            this.jwt = ''
-          }
-        }   
-      } catch(err: any) {
-        console.log(err)
+    });
+    this.websocketConnectorService.wsLockReleaseResponse$.subscribe((msg) => {
+      if(msg.success) {
+        this.jwt = ''
       }
     });
    }
-
-  //subject to subscribe for incoming data
-  getSocketSubject() : WebSocketSubject<any>{
-    return this.websocketConnectorService.getSubsciption();
-  }
 
   transferControl(identifier: string | undefined) {
     let success = false;
@@ -48,7 +35,7 @@ export class WebsocketAPIService {
       identifier,
       interfaceType: "WSControlTransferResponse"
     }
-    this.websocketConnectorService.emit({api: "transferControl", data, interfaceType: "WSControlTransferResponse"});
+    this.websocketConnectorService.emit("transferControl", data);
   }
 
   sendThrottle(value: number) {
@@ -58,7 +45,7 @@ export class WebsocketAPIService {
       instruction,
       interfaceType: "WSThrottleRequest"
     }
-    this.websocketConnectorService.emit({api:'throttle', data, interfaceType: "WSThrottleRequest"});
+    this.websocketConnectorService.emit('throttle', data);
   }
 
   sendSteering(value: number) {
@@ -68,12 +55,15 @@ export class WebsocketAPIService {
       instruction,
       interfaceType: "WSSteeringRequest"
     }
-    this.websocketConnectorService.emit({api:'steer', data, interfaceType: "WSSteeringRequest"});
+    this.websocketConnectorService.emit('steer', data);
   }
 
   claimLock(secretKey: string) {
-    const data = { "secretKey": secretKey }
-    this.websocketConnectorService.emit({api:'lock', data, interfaceType: "secretKey"});
+    const data = { 
+      "secretKey": secretKey, 
+      interfaceType: "WSLockRequest"
+    } 
+    this.websocketConnectorService.emit('lock', data);
   }
 
   releaseLock() {
@@ -81,22 +71,23 @@ export class WebsocketAPIService {
       jwt: this.jwt,
       interfaceType: "JWTResponse"
     }
-    this.websocketConnectorService.emit({api:'unlock', data, interfaceType: "JWTResponse"});
+    this.websocketConnectorService.emit('unlock', data);
   }
 
-  requestControlTransfer() {
+  requestControlTransfer(secretKey: string) {
     
     const data: WSRequestControlTransferToBackend = {
       name: "this.jwt", // replace jwt with human readable names
-      interfaceType: "WSRequestControlTransfer"
+      interfaceType: "WSRequestControlTransfer",
+      secretKey
     }
-    this.websocketConnectorService.emit({api:'requestControlTransfer', data, interfaceType: "WSRequestControlTransferToBackend"});
+    this.websocketConnectorService.emit('requestControlTransfer', data);
   }
 
   feedWatchdog(){
     const data = {
       jwt: this.jwt
     }
-    this.websocketConnectorService.emit({api:'feedWatchdog', data, interfaceType: "watchdogResponse"});
+    this.websocketConnectorService.emit('feedWatchdog', data);
   }
 }

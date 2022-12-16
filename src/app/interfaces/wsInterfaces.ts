@@ -2,6 +2,10 @@ export interface WSMessage {
     interfaceType: string;
 }
 
+export interface WSLockRequest extends WSMessage {
+    secretKey: string;
+}
+
 export interface WSMessageResponse extends WSMessage{
     success: boolean;
 }
@@ -21,6 +25,9 @@ export interface WSConnectionTerminated extends WSMessage{
 }
 
 export interface WSLockReleaseResponse extends WSMessageResponse{
+}
+
+export interface WSControlAssignment extends WSJwtResponse{
 }
 
 export interface WSControlTransfer extends WSMessage{
@@ -45,7 +52,8 @@ export interface Instruction {
 }
 
 export interface WSRequestControlTransferToBackend extends WSMessage{
-    name: string
+    name: string,
+    secretKey: string
 }
 
 export interface WSRequestControlTransferToClient extends WSMessage{
@@ -57,10 +65,11 @@ export interface WSRequestControlTransferToClient extends WSMessage{
    that gets send! Make sure to not use the wrong interfaceName for the
    belonging data on the backend !!! */
 export function messageIsOfInterface(message: any, interfaceName: string){
-    if(message){
-        if(message.interfaceType == interfaceName){
-            return true;
+    const parsedMessage = JSON.parse(message)
+    if(parsedMessage){
+        if(parsedMessage.interfaceType == interfaceName){
+            return parsedMessage;
         }
     }
-    return false;
+    return undefined;
 }
