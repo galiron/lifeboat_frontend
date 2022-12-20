@@ -30,7 +30,6 @@ export class AccessControlService {
       this.feedWatchdog();
     });
     websocketConnectorService.wsControlAssignment$.subscribe((data) => {
-      console.log("subscibe lock", data.jwt)
       if (data.jwt != ""){
         this.websocketAPIService.jwt = data.jwt
       }
@@ -49,9 +48,9 @@ export class AccessControlService {
   declineControl(){
     let requester = this.requesterInProgress
     if (requester) {
-      this.websocketAPIService.transferControl(requester.identifier);
+      this.websocketAPIService.declineControl(requester.identifier);
     } else {
-      this.websocketAPIService.transferControl(undefined);
+      this.websocketAPIService.declineControl(undefined);
     }
   }
 

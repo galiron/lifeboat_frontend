@@ -16,7 +16,6 @@ export class TransferRequestComponent {
   }
 
   dismiss() {
-    console.log(this.data);
     this.accessControlService.declineControl();
     this.data.preClose(true);
   }

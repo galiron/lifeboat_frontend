@@ -13,10 +13,8 @@ export class MainWindowComponent implements OnInit {
   constructor(private accessControlService: AccessControlService, public snackBar: MatSnackBar) {
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
-      console.log("got sub")
       if (this.processing === false) {
         this.processing = true;
-        console.log("locked processing")
         this.processRequester()
       }
     });
