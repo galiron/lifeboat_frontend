@@ -1,5 +1,5 @@
 import { AccessControlService } from './../services/access-control.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TransferRequestComponent } from '../popups/transfer-request/transfer-request.component';
 
@@ -9,6 +9,17 @@ import { TransferRequestComponent } from '../popups/transfer-request/transfer-re
   styleUrls: ['./main-window.component.scss']
 })
 export class MainWindowComponent implements OnInit {
+  prevDate: number = 0;
+  @HostListener('document:mousemove', ['$event']) 
+  onMouseMove(e: any) {
+    const date = new Date().getTime();
+    if(date - this.prevDate > 1000){
+    // your code goes here
+    this.prevDate = date;
+    console.log(e);
+    }
+  }
+
   private processing = false;
   constructor(private accessControlService: AccessControlService, public snackBar: MatSnackBar) {
     this.accessControlService.claimControl();

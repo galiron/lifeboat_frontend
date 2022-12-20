@@ -106,4 +106,11 @@ export class WebsocketAPIService {
     }
     this.websocketConnectorService.emit('feedWatchdog', data);
   }
+
+  feedVigilanceControl(){
+    const data = {
+      jwt: this.jwt
+    }
+    this.websocketConnectorService.emit('feedVigilanceControl', data);
+  }
 }
