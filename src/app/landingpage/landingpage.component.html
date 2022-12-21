@@ -1,0 +1,9 @@
+<div style="display:flex; flex-flow: column; align-items: center; justify-content: center; height: 100%;">
+    <form (submit)="$event.preventDefault()" style="display:flex; flex-flow: column; align-items: center; justify-content: center; height: 100%;">
+        <mat-form-field appearance="fill" style="width: 20rem">
+            <mat-label>Please enter your Name and/or affiliation</mat-label>
+            <input matInput #formName type="text">
+        </mat-form-field>
+        <button style="margin-left: 10px;" color="primary" mat-raised-button>Submit</button>
+    </form>
+</div>

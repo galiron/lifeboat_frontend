@@ -12,6 +12,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TransferRequestComponent } from './popups/transfer-request/transfer-request.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { LandingpageComponent } from './landingpage/landingpage.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
 
@@ -21,7 +24,8 @@ const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
     SpeedControlComponent,
     SteeringControlComponent,
     MainWindowComponent,
-    TransferRequestComponent
+    TransferRequestComponent,
+    LandingpageComponent
   ],
   imports: [
     BrowserModule,
@@ -31,6 +35,8 @@ const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
     BrowserAnimationsModule,
     MatButtonModule,
     MatSnackBarModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]
