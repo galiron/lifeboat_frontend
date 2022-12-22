@@ -1,4 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { IdentityService } from '../services/identity.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -10,13 +12,12 @@ export class LandingpageComponent {
   formName!: ElementRef;
   name!: string;
 
-  constructor(private cd: ChangeDetectorRef){
+  constructor(private identityService: IdentityService, private router: Router) { 
 
   }
 
-  ngAfterViewInit(){
-    this.formName.nativeElement.value = 'whale!';
-    this.name = this.formName.nativeElement.value;
-    this.cd.detectChanges();
+  setNameAndContinue() {
+    this.identityService.name = this.formName.nativeElement.value;
+    this.router.navigateByUrl('/control');
   }
 }
