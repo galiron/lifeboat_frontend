@@ -2,6 +2,7 @@ import { AccessControlService } from './../services/access-control.service';
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TransferRequestComponent } from '../popups/transfer-request/transfer-request.component';
+import { IdentityService } from '../services/identity.service';
 
 @Component({
   selector: 'app-main-window',
@@ -21,7 +22,7 @@ export class MainWindowComponent implements OnInit {
   }
 
   private processing = false;
-  constructor(private accessControlService: AccessControlService, public snackBar: MatSnackBar) {
+  constructor(private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService) {
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
       if (this.processing === false) {
@@ -55,6 +56,6 @@ export class MainWindowComponent implements OnInit {
     this.accessControlService.releaseControl();
   }
   requestControl() {
-    this.accessControlService.requestControlTransfer();
+    this.accessControlService.requestControlTransfer(this.identityService.name);
   }
 }

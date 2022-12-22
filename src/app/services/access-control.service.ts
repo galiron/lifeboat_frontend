@@ -73,8 +73,8 @@ export class AccessControlService {
       return text;
   }
 
-  requestControlTransfer() {
-    this.websocketAPIService.requestControlTransfer(this.secretKey)
+  requestControlTransfer(name: string) {
+    this.websocketAPIService.requestControlTransfer(name, this.secretKey)
   }
 
   claimControl() {

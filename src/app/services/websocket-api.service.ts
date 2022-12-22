@@ -90,10 +90,10 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('unlock', data);
   }
 
-  requestControlTransfer(secretKey: string) {
+  requestControlTransfer(name: string, secretKey: string) {
     
     const data: WSRequestControlTransferToBackend = {
-      name: "this.jwt", // replace jwt with human readable names
+      name,
       interfaceType: "WSRequestControlTransfer",
       secretKey
     }
