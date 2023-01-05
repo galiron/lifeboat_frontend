@@ -1,9 +1,17 @@
+<mat-toolbar>
+    <button *ngIf="this.connectionState == connectionType.CONNECTED_WITH_CONTROL" mat-button style="flex: 1 1 auto;" (click)="releaseControl()">release control</button>
+    <button mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
+</mat-toolbar>
+<div style="position: absolute; margin: 0.5rem; font-family: 'Roboto', sans-serif;" 
+[ngStyle]="{'color': (this.connectionState == this.connectionType.CONNECTED_WITH_CONTROL) ? '#66ff00' : 
+(this.connectionState == this.connectionType.CONNECTED_WITHOUT_CONTROL) ? 'yellow' : 
+(this.connectionState == this.connectionType.DISCONNECTED) ? 'red' : 'default'}"
+>status: {{this.connectionState}}</div>
 <div class="main-window"> 
     <div style="height: 80%;">
         <div style="display: flex; flex-flow: row nowrap; width: 20%; height: 100%">
             <app-speed-control style="align-self: center; height: 100%; width: 100%;"></app-speed-control>
-            <button (click)="releaseControl()">release control</button>
-            <button (click)="requestControl()">request control</button>
+
         </div>
     </div>
     <div style="height: 20%;">

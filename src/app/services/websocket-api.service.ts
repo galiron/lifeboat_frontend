@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WebSocketSubject } from 'rxjs/webSocket';
+import { ConnectionState } from '../enums/connectionstate';
 import { Instruction, messageIsOfInterface, WSControlTransferResponse, WSJwtMessage, WSLockReleaseResponse, WSRequestControlTransferToBackend, WSSteeringRequest, WSThrottleRequest } from '../interfaces/wsInterfaces';
 import { WebsocketConnectorService } from './websocketConnector.service';
 
@@ -14,6 +15,7 @@ export class WebsocketAPIService {
         if(this.jwt === "" && msg.jwt != "") {
           this.jwt = msg.jwt;
         }
+        this.websocketConnectorService.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
     });
     this.websocketConnectorService.wsLockReleaseResponse$.subscribe((msg) => {
       if(msg.success) {

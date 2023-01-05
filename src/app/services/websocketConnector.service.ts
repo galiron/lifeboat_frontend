@@ -1,10 +1,11 @@
 import { WSControlAssignment, WSFeedDogRequest, WSJwtResponse, WSMessage, WSRequestControlTransferToClient } from './../interfaces/wsInterfaces';
 import { Socket } from 'ngx-socket-io';
 import { Injectable } from "@angular/core";
-import { Subject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { io } from "socket.io-client";
-import { messageIsOfInterface, WSJwtMessage, WSLockReleaseResponse } from '../interfaces/wsInterfaces';
+import { WSLockReleaseResponse } from '../interfaces/wsInterfaces';
+import { ConnectionState } from '../enums/connectionstate'
 
 const CHAT_URL = "ws://localhost:3000";
 
@@ -21,19 +22,35 @@ export class WebsocketConnectorService {
   wsFeedDogRequest$ = new Subject<WSFeedDogRequest>();
   wsRequestControlTransferToClient$ = new Subject<WSRequestControlTransferToClient>();
   wsControlAssignment$ = new Subject<WSControlAssignment>();
+  wsConnectionState$ = new BehaviorSubject<string>(ConnectionState.DISCONNECTED);
 
   constructor() {
+    this.socket.on("connect", () => {
+      this.wsConnectionState$.next(ConnectionState.CONNECTED_WITHOUT_CONTROL)
+    })
+    this.socket.on("disconnect", () => {
+      this.wsConnectionState$.next(ConnectionState.DISCONNECTED)
+    })
     this.socket.on("WSControlAssignment", (untypedData: any) => {
       try {
         console.log("new assignment incoming: ",JSON.parse(untypedData))
         this.wsControlAssignment$.next(JSON.parse(untypedData));
+        console.log("untypedData.success", untypedData)
+        if(JSON.parse(untypedData).success) {
+          console.log("control assignment was success")
+          this.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
+        }
       } catch(err: any){
         console.log(err)
       }
     });
     this.socket.on("WSLockReleaseResponse", (untypedData: any) => {
       try {
-        this.wsLockReleaseResponse$.next(JSON.parse(untypedData));
+        let wSLockReleaseResponse: WSLockReleaseResponse = JSON.parse(untypedData);
+        this.wsLockReleaseResponse$.next(wSLockReleaseResponse);
+        if(wSLockReleaseResponse.success) {
+          this.wsConnectionState$.next(ConnectionState.CONNECTED_WITHOUT_CONTROL)
+        }
       } catch(err: any){
         console.log(err)
       }

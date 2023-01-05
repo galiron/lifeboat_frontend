@@ -3,6 +3,8 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TransferRequestComponent } from '../popups/transfer-request/transfer-request.component';
 import { IdentityService } from '../services/identity.service';
+import { WebsocketConnectorService } from '../services/websocketConnector.service';
+import { ConnectionState } from '../enums/connectionstate';
 
 @Component({
   selector: 'app-main-window',
@@ -21,8 +23,10 @@ export class MainWindowComponent implements OnInit {
     }
   }
 
+  connectionState = "init"
+  connectionType = ConnectionState
   private processing = false;
-  constructor(private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService) {
+  constructor(private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService) {
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
       if (this.processing === false) {
@@ -30,6 +34,10 @@ export class MainWindowComponent implements OnInit {
         this.processRequester()
       }
     });
+    this.websocketConnectorService.wsConnectionState$.subscribe((connectionState: string) => {
+      this.connectionState = connectionState;
+      console.log("state: ", connectionState)
+    })
   }
 
   ngOnInit(): void {
