@@ -10,6 +10,10 @@ export interface WSMessageResponse extends WSMessage{
     success: boolean;
 }
 
+export interface WSVigilanceFeedResponse extends WSMessageResponse {
+    
+}
+
 export interface WSJwtResponse extends WSMessageResponse{
     jwt: string;
 }

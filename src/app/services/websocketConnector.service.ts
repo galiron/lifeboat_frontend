@@ -1,4 +1,4 @@
-import { WSControlAssignment, WSFeedDogRequest, WSJwtResponse, WSMessage, WSRequestControlTransferToClient } from './../interfaces/wsInterfaces';
+import { WSControlAssignment, WSFeedDogRequest, WSJwtResponse, WSMessage, WSRequestControlTransferToClient, WSVigilanceFeedResponse } from './../interfaces/wsInterfaces';
 import { Socket } from 'ngx-socket-io';
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
@@ -23,6 +23,7 @@ export class WebsocketConnectorService {
   wsRequestControlTransferToClient$ = new Subject<WSRequestControlTransferToClient>();
   wsControlAssignment$ = new Subject<WSControlAssignment>();
   wsConnectionState$ = new BehaviorSubject<string>(ConnectionState.DISCONNECTED);
+  wSVigilanceFeedResponse$ = new Subject<WSVigilanceFeedResponse>();
 
   constructor() {
     this.socket.on("connect", () => {
@@ -72,6 +73,13 @@ export class WebsocketConnectorService {
     this.socket.on("WSRequestControlTransferToClient", (untypedData: any) => {
       try {
         this.wsRequestControlTransferToClient$.next(JSON.parse(untypedData));
+      } catch(err: any){
+        console.log(err)
+      }
+    });
+    this.socket.on("WSVigilanceFeedResponse", (untypedData: any) => {
+      try {
+        this.wSVigilanceFeedResponse$.next(JSON.parse(untypedData));
       } catch(err: any){
         console.log(err)
       }

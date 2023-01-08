@@ -5,6 +5,7 @@ import { TransferRequestComponent } from '../popups/transfer-request/transfer-re
 import { IdentityService } from '../services/identity.service';
 import { WebsocketConnectorService } from '../services/websocketConnector.service';
 import { ConnectionState } from '../enums/connectionstate';
+import { WebsocketAPIService } from '../services/websocket-api.service';
 
 @Component({
   selector: 'app-main-window',
@@ -17,16 +18,19 @@ export class MainWindowComponent implements OnInit {
   onMouseMove(e: any) {
     const date = new Date().getTime();
     if(date - this.prevDate > 1000){
-    // your code goes here
-    this.prevDate = date;
-    console.log(e);
+      if(this.connectionState == this.connectionType.CONNECTED_WITH_CONTROL){
+        this.websocketAPIService.feedVigilanceControl();
+      }
+      this.prevDate = date;
+      console.log(e);
     }
   }
 
+  idleTimer = 30;
   connectionState = "init"
   connectionType = ConnectionState
   private processing = false;
-  constructor(private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService) {
+  constructor(private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService) {
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
       if (this.processing === false) {
@@ -37,7 +41,31 @@ export class MainWindowComponent implements OnInit {
     this.websocketConnectorService.wsConnectionState$.subscribe((connectionState: string) => {
       this.connectionState = connectionState;
       console.log("state: ", connectionState)
+    });
+    this.websocketConnectorService.wSVigilanceFeedResponse$.subscribe((wSVigilanceFeedResponse) => {
+      console.log("vigresponse: ", wSVigilanceFeedResponse.success)
+      if (wSVigilanceFeedResponse.success === true) {
+        this.idleTimer = 30;
+      }
+    });
+    this.websocketConnectorService.wsControlAssignment$.subscribe((assignment) => {
+      console.log("setTimer")
+      if(assignment.success) {
+        this.setIdleTimer(30);
+      }
     })
+  }
+
+  setIdleTimer(seconds: number){
+    this.idleTimer = seconds
+    if(this.idleTimer > 0){
+      this.idleTimer--;
+      setTimeout(() => {
+        this.setIdleTimer(this.idleTimer);
+      }, 1000);
+    } else {
+      
+    }
   }
 
   ngOnInit(): void {
