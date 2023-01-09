@@ -1,4 +1,4 @@
-<mat-toolbar>
+<mat-toolbar #toolbar>
     <button *ngIf="this.connectionState == connectionType.CONNECTED_WITH_CONTROL" mat-button style="flex: 1 1 auto;" (click)="releaseControl()">release control</button>
     <button mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
 </mat-toolbar>
@@ -14,17 +14,22 @@
         (this.idleTimer < 15) ? 'yellow' : '#66ff00'}"
         >idleTimer: {{this.idleTimer}}</div>
     </div>
-
 </div>
-<div class="main-window"> 
-    <div style="height: 80%;">
-        <div style="display: flex; flex-flow: row nowrap; width: 20%; height: 100%">
+<div class="main-window" #mainWindow> 
+    <div style="flex-grow: 100; display: flex; flex-flow: row nowrap; ">
+        <div style="display: flex; flex-flow: row nowrap; flex-grow: 5;">
             <app-speed-control style="align-self: center; height: 100%; width: 100%;"></app-speed-control>
-
+        </div>
+        <div style="display: flex; flex-flow: row nowrap; background-color: greenyellow; margin-top: 2rem; flex-grow: 100;">
+            <!-- <swiper
+            direction="horizontal" (slideChange)="onSlideChange($event)"
+            >
+                <ng-template *ngFor="let item of slidesEx" swiperSlide> {{ item }} </ng-template>
+            </swiper> -->
         </div>
     </div>
-    <div style="height: 20%;">
-        <div style="display: flex; flex-flow: column nowrap; width: 100%; height: 100%">
+    <div style="flex-grow: 5; ">
+        <div style="display: flex; flex-flow: column nowrap; ">
             <app-steering-control style="align-self: center; height: 100%; width: 100%;"></app-steering-control>    
         </div>
     </div>

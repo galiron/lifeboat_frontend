@@ -16,6 +16,7 @@ import { LandingpageComponent } from './landingpage/landingpage.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { SwiperModule } from 'swiper/angular';
 
 const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
 
@@ -38,7 +39,8 @@ const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
     MatSnackBarModule,
     MatFormFieldModule,
     MatInputModule,
-    MatToolbarModule
+    MatToolbarModule,
+    SwiperModule
   ],
   providers: [],
   bootstrap: [AppComponent]
