@@ -1,5 +1,5 @@
 import { AccessControlService } from './../services/access-control.service';
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, NgZone, OnInit, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TransferRequestComponent } from '../popups/transfer-request/transfer-request.component';
 import { IdentityService } from '../services/identity.service';
@@ -24,7 +24,8 @@ SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
 @Component({
   selector: 'app-main-window',
   templateUrl: './main-window.component.html',
-  styleUrls: ['./main-window.component.scss']
+  styleUrls: ['./main-window.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class MainWindowComponent implements OnInit, AfterViewInit {
   @HostListener('document:mousemove', ['$event']) 
