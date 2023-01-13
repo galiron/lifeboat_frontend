@@ -7,6 +7,18 @@ import { WebsocketConnectorService } from '../services/websocketConnector.servic
 import { ConnectionState } from '../enums/connectionstate';
 import { WebsocketAPIService } from '../services/websocket-api.service';
 import { BehaviorSubject } from 'rxjs';
+import SwiperCore, {   Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Virtual,
+  Zoom,
+  Autoplay,
+  Thumbs,
+  Controller, Keyboard } from 'swiper';
+
+// install Swiper modules
+SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
 
 
 @Component({

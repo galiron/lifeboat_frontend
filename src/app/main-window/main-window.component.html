@@ -27,8 +27,7 @@
         <!--<div style="display: flex; flex-flow: row nowrap; background-color: greenyellow; margin-top: 2rem; flex-grow: 100;">
 
         </div>-->
-        {{this.slides$ | async}}
-        <swiper
+        <swiper [virtual]="false"
             [slidesPerView]="1"
             [spaceBetween]="50"
             [navigation]="true"
