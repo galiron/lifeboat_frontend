@@ -8,6 +8,7 @@ import { ConnectionState } from '../enums/connectionstate';
 import { WebsocketAPIService } from '../services/websocket-api.service';
 import { BehaviorSubject } from 'rxjs';
 
+
 @Component({
   selector: 'app-main-window',
   templateUrl: './main-window.component.html',
@@ -22,7 +23,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
         this.websocketAPIService.feedVigilanceControl();
       }
       this.prevDate = date;
-      console.log(e);
+      console.log(this.slides$);
     }
   }
   @ViewChild('toolbar', {read: ElementRef, static:false}) toolbar!: ElementRef;
@@ -39,7 +40,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   connectionState = "init"
   connectionType = ConnectionState
   private processing = false;
-  slidesEx = ['first', 'second'];
+  slides$ = new BehaviorSubject<string[]>(['']);
   constructor(private ngZone: NgZone, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService) {
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
@@ -96,9 +97,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // this.slides$.next(
-    //   Array.from({ length: 600 }).map((el, index) => `Slide ${index + 1}`)
-    // );
+    this.slides$.next(
+      Array.from({ length: 20 }).map((el, index) => `Slide ${index + 1}`)
+    );
   }
 
   processRequester(){
