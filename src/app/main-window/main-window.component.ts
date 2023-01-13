@@ -78,8 +78,10 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   // }
 
   ngAfterViewInit(): void {
-    const height = window.innerHeight - this.toolbar.nativeElement.offsetHeight;
-    this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${height}px`)
+    if (this.mainWindow){
+      const height = window.innerHeight - this.toolbar.nativeElement.offsetHeight;
+      this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${height}px`)
+    }
   }
 
   setIdleTimer(seconds: number){

@@ -1,6 +1,6 @@
 <mat-toolbar #toolbar>
     <button *ngIf="this.connectionState == connectionType.CONNECTED_WITH_CONTROL" mat-button style="flex: 1 1 auto;" (click)="releaseControl()">release control</button>
-    <button mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
+    <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITHOUT_CONTROL" mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
 </mat-toolbar>
 <div style="position: absolute; width: 100%;">
     <div style="flex-flow: row;">
@@ -18,19 +18,19 @@
 <div class="main-window" #mainWindow> 
     <div style="flex-grow: 100; display: flex; flex-flow: row nowrap; ">
         <div style="display: flex; flex-flow: row nowrap; flex-grow: 5;">
-            <app-speed-control style="align-self: center; height: 100%; width: 100%;"></app-speed-control>
+            <app-speed-control *ngIf="this.connectionState === connectionType.CONNECTED_WITH_CONTROL" style="align-self: center; height: 100%; width: 100%;"></app-speed-control>
         </div>
-        <div style="display: flex; flex-flow: row nowrap; background-color: greenyellow; margin-top: 2rem; flex-grow: 100;">
-            <!-- <swiper
-            direction="horizontal" (slideChange)="onSlideChange($event)"
-            >
-                <ng-template *ngFor="let item of slidesEx" swiperSlide> {{ item }} </ng-template>
-            </swiper> -->
-        </div>
+        <!--<swiper style="display: flex; flex-flow: row nowrap; background-color: greenyellow; margin-top: 2rem; flex-grow: 100;" direction="horizontal" [slidesPerView]="1">
+                <ng-template  swiperSlide> {{ 2 }} </ng-template>
+                <ng-template  swiperSlide> {{ 3 }} </ng-template>
+        </swiper>-->
+        <!--<div style="display: flex; flex-flow: row nowrap; background-color: greenyellow; margin-top: 2rem; flex-grow: 100;">
+
+        </div>-->
     </div>
     <div style="flex-grow: 5; ">
         <div style="display: flex; flex-flow: column nowrap; ">
-            <app-steering-control style="align-self: center; height: 100%; width: 100%;"></app-steering-control>    
+            <app-steering-control *ngIf="this.connectionState === connectionType.CONNECTED_WITH_CONTROL" style="align-self: center; height: 100%; width: 100%;"></app-steering-control>    
         </div>
     </div>
 </div>

@@ -14,8 +14,8 @@ export class WebsocketAPIService {
     this.websocketConnectorService.wsJwtResponse$.subscribe((msg) => {
         if(this.jwt === "" && msg.jwt != "") {
           this.jwt = msg.jwt;
+          this.websocketConnectorService.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
         }
-        this.websocketConnectorService.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
     });
     this.websocketConnectorService.wsLockReleaseResponse$.subscribe((msg) => {
       if(msg.success) {
