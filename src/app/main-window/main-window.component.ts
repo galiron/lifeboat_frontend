@@ -1,5 +1,5 @@
 import { AccessControlService } from './../services/access-control.service';
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, NgZone, OnInit, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, NgZone, OnInit, QueryList, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TransferRequestComponent } from '../popups/transfer-request/transfer-request.component';
 import { IdentityService } from '../services/identity.service';
@@ -16,6 +16,7 @@ import SwiperCore, {   Navigation,
   Autoplay,
   Thumbs,
   Controller, Keyboard } from 'swiper';
+import { ViewChildren } from '@angular/core';
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
@@ -40,14 +41,40 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     }
   }
   @ViewChild('toolbar', {read: ElementRef, static:false}) toolbar!: ElementRef;
+  @ViewChild('speedControlContainer', {read: ElementRef, static:false}) speedControlContainer!: ElementRef;
+  @ViewChild('steeringControlContainer', {read: ElementRef, static:false}) steeringControlContainer!: ElementRef;
+  @ViewChildren('swipers') swipers!: QueryList<ElementRef>;
   @ViewChild('mainWindow') mainWindow!: ElementRef;
   @HostListener('window:resize', ['$event'])
     onResize() {
-      const height = window.innerHeight - this.toolbar.nativeElement.offsetHeight;
-      console.log(height)
-      this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${height}px`)
-      console.log(this.toolbar.nativeElement.offsetHeight)
+      console.log(this.speedControlContainer)
+      console.log(this.toolbar)
+      console.log(this.mainWindow)
+      if(this.speedControlContainer && this.steeringControlContainer){
+        const windowHeight = window.innerHeight;
+        const windowWidth = window.innerWidth;
+        const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
+        this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${mainComponentHeight}px`);
+        const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth;
+        const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight;
+        const formatFits = 1.78/(formatWidth/formatHeight) // 16:9 format divided by width to height ration to estimate how many 16:9 streams could comfortably fit into the screen
+        console.log("can fit: ", formatFits) 
+        this.streamsToFitIntoDisplay = Math.floor(formatFits);
+        console.log("swipers: ", this.swipers)
+        this.swiperHeight = formatHeight/this.streamsToFitIntoDisplay
+        this.swiperWidth = formatWidth/this.streamsToFitIntoDisplay
+        this.swipers.forEach((swiper: any) => {
+          console.log(swiper)
+          //this.renderer.setStyle(swiper, "max-height", `${formatHeight/this.streamsToFitIntoDisplay}px`);
+          //this.renderer.setStyle(swiper, "max-width", `${formatWidth/this.streamsToFitIntoDisplay}px`);
+          
+        })
+      }
+
   }
+  swiperHeight = 0;
+  swiperWidth = 0;
+  streamsToFitIntoDisplay : number = 1;
   prevDate: number = 0;
   idleTimer = 30;
   connectionState = "init"

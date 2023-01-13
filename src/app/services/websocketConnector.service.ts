@@ -87,7 +87,7 @@ export class WebsocketConnectorService {
   }
 
   emit(api: string, data: any): void {
-    console.log("request api and data: ", api, data)
+    //console.log("request api and data: ", api, data)
     this.socket.emit(api, data)
   }
 }

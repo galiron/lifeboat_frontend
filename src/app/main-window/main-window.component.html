@@ -16,38 +16,53 @@
     </div>
 </div>
 <div class="main-window" #mainWindow> 
-    <div style="flex-grow: 100; display: flex; flex-flow: row nowrap; ">
-        <!-- <div style="display: flex; flex-flow: row nowrap; flex-grow: 5;">
+    <div style=" display: flex; flex-flow: row nowrap; height: 100%;">
+        <div style="display: flex; flex-flow: row nowrap; min-width: 5rem;" #speedControlContainer>
             <app-speed-control *ngIf="this.connectionState === connectionType.CONNECTED_WITH_CONTROL" style="align-self: center; height: 100%; width: 100%;"></app-speed-control>
-        </div> -->
-        <!--<swiper style="display: flex; flex-flow: row nowrap; background-color: greenyellow; margin-top: 2rem; flex-grow: 100;" direction="horizontal" [slidesPerView]="1">
-                <ng-template  swiperSlide> {{ 2 }} </ng-template>
-                <ng-template  swiperSlide> {{ 3 }} </ng-template>
-        </swiper>-->
-        <!--<div style="display: flex; flex-flow: row nowrap; background-color: greenyellow; margin-top: 2rem; flex-grow: 100;">
-
-        </div>-->
-        <swiper [virtual]="false"
-            [slidesPerView]="1"
-            [spaceBetween]="50"
-            [navigation]="true"
-            [pagination]="{ type: 'fraction' }"
-            [centeredSlides]="true"
-            [keyboard]="{
-                enabled: true
-            }"
-            class="my-swiper"
-            >
-            <ng-template swiperSlide *ngFor="let slide of this.slides$ | async; index as i">
-                <div class="swiper-slide-container">
-                {{ slide }}
-                </div>
-            </ng-template>
-        </swiper>
+        </div>
+        <div style="display: flex; flex-flow: column; margin-top: 2rem;">
+                <swiper #swipers *ngFor="let _ of [].constructor(this.streamsToFitIntoDisplay)"
+                    [virtual]="false"
+                    [slidesPerView]="1"
+                    [spaceBetween]="50"
+                    [navigation]="true"
+                    [pagination]="{ type: 'fraction' }"
+                    [centeredSlides]="true"
+                    [keyboard]="{
+                        enabled: true
+                    }"
+                    class="my-swiper"
+                    >
+                        <ng-template swiperSlide style="width: 300px;" *ngFor="let slide of this.slides$ | async; index as i">
+                            <div class="swiper-slide-container">
+                            {{ slide }}
+                            </div>
+                        </ng-template>
+                </swiper>
+        </div>
+        
+        <!-- <swiper style="margin-top: 2rem;"
+        [virtual]="false"
+        [slidesPerView]="1"
+        [spaceBetween]="50"
+        [navigation]="true"
+        [pagination]="{ type: 'fraction' }"
+        [centeredSlides]="true"
+        [keyboard]="{
+            enabled: true
+        }"
+        class="my-swiper"
+        >
+        <ng-template swiperSlide *ngFor="let slide of this.slides$ | async; index as i">
+            <div class="swiper-slide-container">
+            {{ slide }}
+            </div>
+        </ng-template>
+    </swiper> -->
     </div>
-    <!-- <div style="flex-grow: 5; ">
+    <div style="height: 5rem;" #steeringControlContainer>
         <div style="display: flex; flex-flow: column nowrap; ">
             <app-steering-control *ngIf="this.connectionState === connectionType.CONNECTED_WITH_CONTROL" style="align-self: center; height: 100%; width: 100%;"></app-steering-control>    
         </div>
-    </div> -->
+    </div>
 </div>
