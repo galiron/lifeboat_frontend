@@ -1,5 +1,5 @@
 import { AccessControlService } from './../services/access-control.service';
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, NgZone, OnInit, QueryList, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnInit, QueryList, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TransferRequestComponent } from '../popups/transfer-request/transfer-request.component';
 import { IdentityService } from '../services/identity.service';
@@ -15,7 +15,7 @@ import SwiperCore, {   Navigation,
   Zoom,
   Autoplay,
   Thumbs,
-  Controller, Keyboard } from 'swiper';
+  Controller, Keyboard, Swiper } from 'swiper';
 import { ViewChildren } from '@angular/core';
 
 // install Swiper modules
@@ -50,27 +50,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       console.log(this.speedControlContainer)
       console.log(this.toolbar)
       console.log(this.mainWindow)
-      if(this.speedControlContainer && this.steeringControlContainer){
-        const windowHeight = window.innerHeight;
-        const windowWidth = window.innerWidth;
-        const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
-        this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${mainComponentHeight}px`);
-        const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth;
-        const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight;
-        const formatFits = 1.78/(formatWidth/formatHeight) // 16:9 format divided by width to height ration to estimate how many 16:9 streams could comfortably fit into the screen
-        console.log("can fit: ", formatFits) 
-        this.streamsToFitIntoDisplay = Math.floor(formatFits);
-        console.log("swipers: ", this.swipers)
-        this.swiperHeight = formatHeight/this.streamsToFitIntoDisplay
-        this.swiperWidth = formatWidth/this.streamsToFitIntoDisplay
-        this.swipers.forEach((swiper: any) => {
-          console.log(swiper)
-          //this.renderer.setStyle(swiper, "max-height", `${formatHeight/this.streamsToFitIntoDisplay}px`);
-          //this.renderer.setStyle(swiper, "max-width", `${formatWidth/this.streamsToFitIntoDisplay}px`);
-          
-        })
-      }
-
+      this.adjustSwiperSlides()
   }
   swiperHeight = 225;
   swiperWidth = 300;
@@ -81,7 +61,11 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   connectionType = ConnectionState
   private processing = false;
   slides$ = new BehaviorSubject<string[]>(['']);
-  constructor(private ngZone: NgZone, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService) {
+  constructor(private ngZone: NgZone, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService) {
+    const swiper = new Swiper('.swiper', {
+      speed: 400,
+      spaceBetween: 100,
+    });
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
       if (this.processing === false) {
@@ -107,10 +91,45 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     })
   }
 
+  adjustSwiperSlides(){
+    if(this.speedControlContainer && this.steeringControlContainer) {
+      const windowHeight = document.body.offsetHeight;
+      const windowWidth = document.body.offsetWidth;
+      console.log("window.height", windowHeight)
+      console.log("window.innerWidth", windowWidth)
+      const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
+      console.log("main: ", mainComponentHeight)
+      this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${mainComponentHeight}px`);
+      const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth - 32; // small width buffer to prevent buggy resizes
+      const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight - 32; // -32 ~ 2rem (if default font size of 16)
+      const formatFits = 1.78/(formatWidth/formatHeight) // 16:9 format divided by width to height ration to estimate how many 16:9 streams could comfortably fit into the screen
+      this.streamsToFitIntoDisplay = Math.floor(formatFits);
+      if( this.streamsToFitIntoDisplay == 0){
+        this.streamsToFitIntoDisplay = 1;
+      }
+      console.log("fits: ", formatFits - this.streamsToFitIntoDisplay)
+      if( formatFits - this.streamsToFitIntoDisplay < 0.2){ // prevent 
+        this.streamsToFitIntoDisplay -=1;
+      }
+      this.swiperHeight = formatHeight/this.streamsToFitIntoDisplay
+      this.swiperWidth = formatWidth
+      this.swipers.forEach((swiper: any) => {
+        console.log(swiper)
+        //this.renderer.setStyle(swiper, "max-height", `${formatHeight/this.streamsToFitIntoDisplay}px`);
+        //this.renderer.setStyle(swiper, "max-width", `${formatWidth/this.streamsToFitIntoDisplay}px`);
+        
+      })
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
+
+
   ngAfterViewInit(): void {
     if (this.mainWindow){
-      const height = window.innerHeight - this.toolbar.nativeElement.offsetHeight;
-      this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${height}px`)
+      setTimeout(() => {
+        this.adjustSwiperSlides();
+      }, 0);
     }
   }
 

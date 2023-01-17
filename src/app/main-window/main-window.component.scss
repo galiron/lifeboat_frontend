@@ -1,5 +1,6 @@
 /* slides.component.scss */
 @import 'swiper/scss';
+@import 'swiper/css/bundle';
 @import 'swiper/scss/navigation';
 @import 'swiper/scss/pagination';
 
@@ -14,8 +15,6 @@
   text-align: center;
   background: #fff;
   height: 100%;
-  max-width: 600px;
-  margin: auto;
   border-radius: 20px;
 }
 .main-window {

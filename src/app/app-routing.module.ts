@@ -5,9 +5,9 @@ import { LandingpageComponent } from './landingpage/landingpage.component';
 import { AuthGuardService } from './authentication/auth-guard.service';
 
 const routes: Routes = [
-  // { path: '', component: LandingpageComponent, pathMatch: 'full'},
-  // { path: 'control', canActivate: [AuthGuardService], component: MainWindowComponent}
-  { path: '', component: MainWindowComponent, pathMatch: 'full'}
+  { path: '', component: LandingpageComponent, pathMatch: 'full'},
+  { path: 'control', canActivate: [AuthGuardService], component: MainWindowComponent}
+  // { path: '', component: MainWindowComponent, pathMatch: 'full'}
 ];
 
 @NgModule({
