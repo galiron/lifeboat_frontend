@@ -72,8 +72,8 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       }
 
   }
-  swiperHeight = 0;
-  swiperWidth = 0;
+  swiperHeight = 225;
+  swiperWidth = 300;
   streamsToFitIntoDisplay : number = 1;
   prevDate: number = 0;
   idleTimer = 30;
@@ -106,17 +106,6 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       }
     })
   }
-
- 
-  // onSlideChange(swiper: any) {
-  //   if (swiper.isEnd) {
-  //     // all swiper events are run outside of ngzone, so use ngzone.run or detectChanges to update the view.
-  //     this.ngZone.run(() => {
-  //       this.slidesEx = [...this.slidesEx, `added ${this.slidesEx.length - 1}`];
-  //     });
-  //     console.log(this.slidesEx);
-  //   }
-  // }
 
   ngAfterViewInit(): void {
     if (this.mainWindow){

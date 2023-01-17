@@ -22,6 +22,8 @@
         </div>
         <div style="display: flex; flex-flow: column; margin-top: 2rem;">
                 <swiper #swipers *ngFor="let _ of [].constructor(this.streamsToFitIntoDisplay)"
+                    [height]="swiperHeight"
+                    [width]="swiperWidth"
                     [virtual]="false"
                     [slidesPerView]="1"
                     [spaceBetween]="50"
@@ -33,7 +35,7 @@
                     }"
                     class="my-swiper"
                     >
-                        <ng-template swiperSlide style="width: 300px;" *ngFor="let slide of this.slides$ | async; index as i">
+                        <ng-template swiperSlide *ngFor="let slide of this.slides$ | async; index as i">
                             <div class="swiper-slide-container">
                             {{ slide }}
                             </div>
