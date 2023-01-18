@@ -1,5 +1,5 @@
 <mat-toolbar #toolbar>
-    <button *ngIf="this.connectionState == connectionType.CONNECTED_WITH_CONTROL" mat-button style="flex: 1 1 auto;" (click)="releaseControl()">release control</button>
+    <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITH_CONTROL" mat-button style="flex: 1 1 auto;" (click)="releaseControl()">release control</button>
     <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITHOUT_CONTROL" mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
 </mat-toolbar>
 <div style="position: absolute; width: 100%;">

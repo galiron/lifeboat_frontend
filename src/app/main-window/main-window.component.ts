@@ -56,7 +56,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   swiperWidth = 300;
   streamsToFitIntoDisplay : number = 1;
   prevDate: number = 0;
-  idleTimer = 30;
+  idleTimer = 0;
   connectionState = "init"
   connectionType = ConnectionState
   private processing = false;
@@ -75,10 +75,14 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     });
     this.websocketConnectorService.wsConnectionState$.subscribe((connectionState: string) => {
       this.connectionState = connectionState;
+      console.log("state is: ",this.connectionState)
+      if((connectionState === this.connectionType.DISCONNECTED) || (connectionState === this.connectionType.CONNECTED_WITHOUT_CONTROL)) {
+        this.idleTimer = 0
+      }
       console.log("state: ", connectionState)
     });
     this.websocketConnectorService.wSVigilanceFeedResponse$.subscribe((wSVigilanceFeedResponse) => {
-      console.log("vigresponse: ", wSVigilanceFeedResponse.success)
+      console.log("vigilresponse: ", wSVigilanceFeedResponse)
       if (wSVigilanceFeedResponse.success === true) {
         this.idleTimer = 30;
       }
@@ -86,7 +90,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     this.websocketConnectorService.wsControlAssignment$.subscribe((assignment) => {
       console.log("setTimer")
       if(assignment.success) {
-        this.setIdleTimer(30);
+        if(this.idleTimer === 0){
+          this.setIdleTimer(30);
+        }
       }
     })
   }
@@ -135,12 +141,11 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
 
   setIdleTimer(seconds: number){
     this.idleTimer = seconds
-    if(this.idleTimer > 0){
+    if(this.idleTimer > 0) {
       this.idleTimer--;
       setTimeout(() => {
         this.setIdleTimer(this.idleTimer);
       }, 1000);
-    } else {
     }
   }
 
