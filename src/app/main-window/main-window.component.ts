@@ -17,6 +17,7 @@ import SwiperCore, {   Navigation,
   Thumbs,
   Controller, Keyboard, Swiper } from 'swiper';
 import { ViewChildren } from '@angular/core';
+import { WSControlAssignment, WSVigilanceFeedResponse } from '../interfaces/wsInterfaces';
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
@@ -81,13 +82,13 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       }
       console.log("state: ", connectionState)
     });
-    this.websocketConnectorService.wSVigilanceFeedResponse$.subscribe((wSVigilanceFeedResponse) => {
+    this.websocketConnectorService.wSVigilanceFeedResponse$.subscribe((wSVigilanceFeedResponse: WSVigilanceFeedResponse) => {
       console.log("vigilresponse: ", wSVigilanceFeedResponse)
       if (wSVigilanceFeedResponse.success === true) {
         this.idleTimer = 30;
       }
     });
-    this.websocketConnectorService.wsControlAssignment$.subscribe((assignment) => {
+    this.websocketConnectorService.wsControlAssignment$.subscribe((assignment: WSControlAssignment) => {
       console.log("setTimer")
       if(assignment.success) {
         if(this.idleTimer === 0){

@@ -1,7 +1,7 @@
 import { WebsocketConnectorService } from './websocketConnector.service';
 
 import { Injectable } from '@angular/core';
-import { messageIsOfInterface, WSFeedDogRequest, WSMessage, WSControlTransfer, WSRequestControlTransferToClient } from '../interfaces/wsInterfaces';
+import { messageIsOfInterface, WSFeedDogRequest, WSMessage, WSControlTransfer, WSRequestControlTransferToClient, WSControlAssignment } from '../interfaces/wsInterfaces';
 import { Subject } from 'rxjs';
 import { Queue } from 'queue-typescript';
 import { WebsocketAPIService } from './websocket-api.service';
@@ -19,18 +19,19 @@ export class AccessControlService {
   
 
   constructor(private websocketAPIService: WebsocketAPIService, private websocketConnectorService: WebsocketConnectorService, private randomGeneratorService: RandomGeneratorService) {
-    websocketConnectorService.wsMessage$.subscribe((data) => {
+    websocketConnectorService.wsMessage$.subscribe((data: WSMessage) => {
+      // unused; listener for general ws Messages
     });
-    websocketConnectorService.wsRequestControlTransferToClient$.subscribe((data) => {
+    websocketConnectorService.wsRequestControlTransferToClient$.subscribe((data: WSRequestControlTransferToClient) => {
           this.controlRequester.append(data);
           this.controlRequest$.next({});
     });
-    websocketConnectorService.wsFeedDogRequest$.subscribe((data) => {
+    websocketConnectorService.wsFeedDogRequest$.subscribe(() => {
       this.feedWatchdog();
     });
-    websocketConnectorService.wsControlAssignment$.subscribe((data) => {
-      if (data.jwt != ""){
-        this.websocketAPIService.jwt = data.jwt
+    websocketConnectorService.wsControlAssignment$.subscribe((assignment: WSControlAssignment) => {
+      if (assignment.jwt != ""){
+        this.websocketAPIService.jwt = assignment.jwt
       }
       console.log("jwt is now: ", this.websocketAPIService.jwt)
     });

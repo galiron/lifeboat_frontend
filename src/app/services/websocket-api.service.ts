@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { WebSocketSubject } from 'rxjs/webSocket';
 import { ConnectionState } from '../enums/connectionstate';
-import { Instruction, messageIsOfInterface, WSControlTransferResponse, WSJwtMessage, WSLockReleaseResponse, WSRequestControlTransferToBackend, WSSteeringRequest, WSThrottleRequest } from '../interfaces/wsInterfaces';
+import { Instruction, messageIsOfInterface, WSControlTransferResponse, WSJwtMessage, WSJwtResponse, WSLockReleaseResponse, WSRequestControlTransferToBackend, WSSteeringRequest, WSThrottleRequest } from '../interfaces/wsInterfaces';
 import { WebsocketConnectorService } from './websocketConnector.service';
 
 @Injectable({
@@ -11,14 +11,14 @@ export class WebsocketAPIService {
   jwt = ''; // api requests need jwt
 
   constructor(private websocketConnectorService: WebsocketConnectorService) {
-    this.websocketConnectorService.wsJwtResponse$.subscribe((msg) => {
-        if(this.jwt === "" && msg.jwt != "") {
-          this.jwt = msg.jwt;
+    this.websocketConnectorService.wsJwtResponse$.subscribe((data: WSJwtResponse) => {
+        if(this.jwt === "" && data.jwt != "") {
+          this.jwt = data.jwt;
           this.websocketConnectorService.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
         }
     });
-    this.websocketConnectorService.wsLockReleaseResponse$.subscribe((msg) => {
-      if(msg.success) {
+    this.websocketConnectorService.wsLockReleaseResponse$.subscribe((data: WSLockReleaseResponse) => {
+      if(data.success) {
         this.jwt = ''
       }
     });

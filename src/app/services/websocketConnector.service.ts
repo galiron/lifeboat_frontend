@@ -34,8 +34,8 @@ export class WebsocketConnectorService {
     })
     this.socket.on("WSControlAssignment", (untypedData: any) => {
       try {
-        console.log("new assignment incoming: ",JSON.parse(untypedData))
-        const msg: WSControlAssignment = JSON.parse(untypedData)
+        console.log("new assignment incoming: ",untypedData)
+        const msg: WSControlAssignment = untypedData
         this.wsControlAssignment$.next(msg);
         if(msg.success){
           console.log("control assignment was success")
@@ -47,7 +47,7 @@ export class WebsocketConnectorService {
     });
     this.socket.on("WSLockReleaseResponse", (untypedData: any) => {
       try {
-        let wSLockReleaseResponse: WSLockReleaseResponse = JSON.parse(untypedData);
+        let wSLockReleaseResponse: WSLockReleaseResponse = untypedData;
         this.wsLockReleaseResponse$.next(wSLockReleaseResponse);
         if(wSLockReleaseResponse.success) {
           this.wsConnectionState$.next(ConnectionState.CONNECTED_WITHOUT_CONTROL)
@@ -58,28 +58,28 @@ export class WebsocketConnectorService {
     });
     this.socket.on("WSMessage", (untypedData: any) => {
       try {
-        this.wsMessage$.next(JSON.parse(untypedData));
+        this.wsMessage$.next(untypedData);
       } catch(err: any){
         console.log(err)
       }
     });
     this.socket.on("WSFeedDogRequest", (untypedData: any) => {
       try {
-        this.wsFeedDogRequest$.next(JSON.parse(untypedData));
+        this.wsFeedDogRequest$.next(untypedData);
       } catch(err: any){
         console.log(err)
       }
     });
     this.socket.on("WSRequestControlTransferToClient", (untypedData: any) => {
       try {
-        this.wsRequestControlTransferToClient$.next(JSON.parse(untypedData));
+        this.wsRequestControlTransferToClient$.next(untypedData);
       } catch(err: any){
         console.log(err)
       }
     });
     this.socket.on("WSVigilanceFeedResponse", (untypedData: any) => {
       try {
-        this.wSVigilanceFeedResponse$.next(JSON.parse(untypedData));
+        this.wSVigilanceFeedResponse$.next(untypedData);
       } catch(err: any){
         console.log(err)
       }
