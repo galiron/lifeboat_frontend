@@ -24,7 +24,7 @@ export class WebsocketAPIService {
     });
    }
 
-  transferControl(identifier: string | undefined) {
+  transferControl(identifier: string | undefined) : void{
     let success = false;
     if(identifier) {
       success = true;
@@ -40,7 +40,7 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit("transferControl", data);
   }
 
-  declineControl(identifier: string | undefined) {
+  declineControl(identifier: string | undefined) : void{
     let success = false;
     if(identifier) {
       success = true;
@@ -56,7 +56,7 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit("transferControlDeclined", data);
   }
 
-  sendThrottle(value: number) {
+  sendThrottle(value: number) : void {
     const instruction: Instruction = { value }
     const data: WSThrottleRequest = {
       jwt: this.jwt,
@@ -66,7 +66,7 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('throttle', data);
   }
 
-  sendSteering(value: number) {
+  sendSteering(value: number) : void {
     const instruction : Instruction = { value }
     const data: WSSteeringRequest = {
       jwt: this.jwt,
@@ -76,7 +76,7 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('steer', data);
   }
 
-  claimLock(secretKey: string) {
+  claimLock(secretKey: string) : void{
     const data = { 
       "secretKey": secretKey, 
       interfaceType: "WSLockRequest"
@@ -84,7 +84,7 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('lock', data);
   }
 
-  releaseLock() {
+  releaseLock() : void{
     const data: WSJwtMessage = {
       jwt: this.jwt,
       interfaceType: "JWTResponse"
@@ -92,7 +92,7 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('unlock', data);
   }
 
-  requestControlTransfer(name: string, secretKey: string) {
+  requestControlTransfer(name: string, secretKey: string) : void{
     
     const data: WSRequestControlTransferToBackend = {
       name,
@@ -102,14 +102,14 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('requestControlTransfer', data);
   }
 
-  feedWatchdog(){
+  feedWatchdog() : void {
     const data = {
       jwt: this.jwt
     }
     this.websocketConnectorService.emit('feedWatchdog', data);
   }
 
-  feedVigilanceControl(){
+  feedVigilanceControl() : void {
     const data = {
       jwt: this.jwt
     }

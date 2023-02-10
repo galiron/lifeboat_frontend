@@ -34,11 +34,8 @@ export class WebsocketConnectorService {
     })
     this.socket.on("WSControlAssignment", (untypedData: any) => {
       try {
-        console.log("new assignment incoming: ",JSON.parse(untypedData))
         this.wsControlAssignment$.next(JSON.parse(untypedData));
-        console.log("untypedData.success", untypedData)
         if(JSON.parse(untypedData).success) {
-          console.log("control assignment was success")
           this.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
         }
       } catch(err: any){

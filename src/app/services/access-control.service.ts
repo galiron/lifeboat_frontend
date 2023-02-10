@@ -5,21 +5,20 @@ import { messageIsOfInterface, WSFeedDogRequest, WSMessage, WSControlTransfer, W
 import { Subject } from 'rxjs';
 import { Queue } from 'queue-typescript';
 import { WebsocketAPIService } from './websocket-api.service';
+import { RandomGeneratorService } from './random-generator.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccessControlService {
 
-  possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890,./;'[]\=-)(*&^%$#@!~`";
-  lengthOfCode = 40;
   controlRequest$ = new Subject();
   controlRequester = new Queue<WSRequestControlTransferToClient>();
   requesterInProgress?: WSRequestControlTransferToClient | undefined;
   secretKey: string = "";
   
 
-  constructor(private websocketAPIService: WebsocketAPIService, private websocketConnectorService: WebsocketConnectorService) {
+  constructor(private websocketAPIService: WebsocketAPIService, private websocketConnectorService: WebsocketConnectorService, private randomGeneratorService: RandomGeneratorService) {
     websocketConnectorService.wsMessage$.subscribe((data) => {
     });
     websocketConnectorService.wsRequestControlTransferToClient$.subscribe((data) => {
@@ -37,7 +36,7 @@ export class AccessControlService {
     });
    }
 
-  popNextRequester(){
+  popNextRequester() : void {
     if(this.controlRequester.length > 0){
       this.requesterInProgress = this.controlRequester.dequeue();
     } else{
@@ -45,7 +44,7 @@ export class AccessControlService {
     }
   }
 
-  declineControl(){
+  declineControl() : void {
     let requester = this.requesterInProgress
     if (requester) {
       this.websocketAPIService.declineControl(requester.identifier);
@@ -54,7 +53,7 @@ export class AccessControlService {
     }
   }
 
-  transferControl() {
+  transferControl() : void {
     let requester = this.requesterInProgress
     if (requester) {
       this.websocketAPIService.transferControl(requester.identifier);
@@ -65,30 +64,23 @@ export class AccessControlService {
     this.controlRequester = new Queue<WSControlTransfer>();
   }
 
-  private makeRandom(lengthOfCode: number, possible: string) {
-    let text = "";
-    for (let i = 0; i < lengthOfCode; i++) {
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-      return text;
-  }
 
-  requestControlTransfer(name: string) {
+  requestControlTransfer(name: string) : void {
     this.websocketAPIService.requestControlTransfer(name, this.secretKey)
   }
 
-  claimControl() {
+  claimControl() : void {
     if (this.secretKey == "") {
-       this.secretKey = this.makeRandom(this.lengthOfCode, this.possible);
+       this.secretKey = this.randomGeneratorService.makeRandom();
     }
     this.websocketAPIService.claimLock(this.secretKey);
   }
 
-  releaseControl() {
+  releaseControl() : void {
     this.websocketAPIService.releaseLock();
   }
 
-  feedWatchdog() {
+  feedWatchdog() : void {
     this.websocketAPIService.feedWatchdog();
   }
 }

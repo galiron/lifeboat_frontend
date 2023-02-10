@@ -16,7 +16,7 @@ export class LandingpageComponent {
 
   }
 
-  setNameAndContinue() {
+  setNameAndContinue() : void {
     this.identityService.name = this.formName.nativeElement.value;
     this.router.navigateByUrl('/control');
   }

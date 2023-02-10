@@ -15,12 +15,12 @@ export class TransferRequestComponent {
     this.requestName = accessControlService.requesterInProgress!.name;
   }
 
-  dismiss() {
+  dismiss() : void {
     this.accessControlService.declineControl();
     this.data.preClose(true);
   }
 
-  grantAccess() {
+  grantAccess() : void {
     this.accessControlService.transferControl();
     this.accessControlService.controlRequester = new Queue<WSControlTransfer>();
     this.data.preClose(true);

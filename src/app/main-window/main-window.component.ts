@@ -56,7 +56,7 @@ export class MainWindowComponent implements OnInit {
     })
   }
 
-  setIdleTimer(seconds: number){
+  setIdleTimer(seconds: number) :  void {
     this.idleTimer = seconds
     if(this.idleTimer > 0){
       this.idleTimer--;
@@ -71,7 +71,7 @@ export class MainWindowComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  processRequester(){
+  processRequester() : void {
     this.accessControlService.popNextRequester();
     console.log("next requester is: ", JSON.stringify(this.accessControlService.requesterInProgress))
     if(this.accessControlService.requesterInProgress != undefined) {
@@ -88,10 +88,10 @@ export class MainWindowComponent implements OnInit {
     }
   }
 
-  releaseControl() {
+  releaseControl() : void {
     this.accessControlService.releaseControl();
   }
-  requestControl() {
+  requestControl() : void {
     this.accessControlService.requestControlTransfer(this.identityService.name);
   }
 }
