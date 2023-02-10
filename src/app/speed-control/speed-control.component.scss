@@ -32,7 +32,8 @@
     .speed-slider .ngx-slider.vertical .ngx-slider-bubble {
       bottom: 14px;
       color: orange;
-      left: 50px !important;
+      left: 25px !important;
+      z-index: 100;
     }
   
     .speed-slider .ngx-slider.vertical .ngx-slider-limit {

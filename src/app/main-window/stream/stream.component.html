@@ -1,0 +1,9 @@
+<div style="position: absolute; z-index: 99; background-color: red;" [style.width.px]="this.videoWidth" [style.height.px]="this.videoHeight">
+    <div style="display: flex; flex-flow: row nowrap; justify-content: space-between; align-items: center; height: 100%;">
+        <img class="icon" src="assets/left-arrow.png" (click)="previousSlide()">
+        <img class="icon" src="assets/right-arrow.png" (click)="nextSlide()">
+    </div>
+</div>
+<video #videoElement style="width: 100%;" playsinline autoplay
+[srcObject]="">
+</video>
