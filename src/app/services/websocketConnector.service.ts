@@ -32,10 +32,10 @@ export class WebsocketConnectorService {
     this.socket.on("disconnect", () => {
       this.wsConnectionState$.next(ConnectionState.DISCONNECTED)
     })
-    this.socket.on("WSControlAssignment", (untypedData: any) => {
+    this.socket.on("WSControlAssignment", (dirtyData: WSControlAssignment) => {
       try {
-        console.log("new assignment incoming: ",untypedData)
-        const msg: WSControlAssignment = untypedData
+        console.log("new assignment incoming: ",dirtyData)
+        const msg: WSControlAssignment = dirtyData
         this.wsControlAssignment$.next(msg);
         if(msg.success){
           console.log("control assignment was success")
@@ -45,9 +45,9 @@ export class WebsocketConnectorService {
         console.log(err)
       }
     });
-    this.socket.on("WSLockReleaseResponse", (untypedData: any) => {
+    this.socket.on("WSLockReleaseResponse", (dirtyData: WSLockReleaseResponse) => {
       try {
-        let wSLockReleaseResponse: WSLockReleaseResponse = untypedData;
+        let wSLockReleaseResponse: WSLockReleaseResponse = dirtyData;
         this.wsLockReleaseResponse$.next(wSLockReleaseResponse);
         if(wSLockReleaseResponse.success) {
           this.wsConnectionState$.next(ConnectionState.CONNECTED_WITHOUT_CONTROL)
@@ -56,30 +56,30 @@ export class WebsocketConnectorService {
         console.log(err)
       }
     });
-    this.socket.on("WSMessage", (untypedData: any) => {
+    this.socket.on("WSMessage", (dirtyData: WSMessage) => {
       try {
-        this.wsMessage$.next(untypedData);
+        this.wsMessage$.next(dirtyData);
       } catch(err: any){
         console.log(err)
       }
     });
-    this.socket.on("WSFeedDogRequest", (untypedData: any) => {
+    this.socket.on("WSFeedDogRequest", (dirtyData: WSFeedDogRequest) => {
       try {
-        this.wsFeedDogRequest$.next(untypedData);
+        this.wsFeedDogRequest$.next(dirtyData);
       } catch(err: any){
         console.log(err)
       }
     });
-    this.socket.on("WSRequestControlTransferToClient", (untypedData: any) => {
+    this.socket.on("WSRequestControlTransferToClient", (dirtyData: WSRequestControlTransferToClient) => {
       try {
-        this.wsRequestControlTransferToClient$.next(untypedData);
+        this.wsRequestControlTransferToClient$.next(dirtyData);
       } catch(err: any){
         console.log(err)
       }
     });
-    this.socket.on("WSVigilanceFeedResponse", (untypedData: any) => {
+    this.socket.on("WSVigilanceFeedResponse", (dirtyData: WSVigilanceFeedResponse) => {
       try {
-        this.wSVigilanceFeedResponse$.next(untypedData);
+        this.wSVigilanceFeedResponse$.next(dirtyData);
       } catch(err: any){
         console.log(err)
       }
