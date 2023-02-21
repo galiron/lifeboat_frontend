@@ -8,7 +8,11 @@ import { Stream } from 'src/app/models/stream';
   styleUrls: ['./stream.component.scss']
 })
 export class StreamComponent implements AfterViewInit{
-  @Input() streams!: Stream[];
+  streams!: Array<MediaStream>;
+  @Input() set setStreams(streams: Array<MediaStream>) {
+    this.streams = streams;
+    this.reloadVideos()
+  }
   @ViewChild('videoElement') videoElement!: ElementRef;
   @ViewChild('audioElement') audioElement!: ElementRef;
   @HostListener('window:resize', ['$event'])
@@ -20,7 +24,7 @@ export class StreamComponent implements AfterViewInit{
   streamHeight: number = 0;
   videoHeight: number = 0;
   videoWidth: number = 0;
-  currentStream: Stream | undefined;
+  currentStream: MediaStream | undefined;
   constructor(private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2) {
     if(this.streams)
     this.currentStream = this.streams[0];
@@ -29,6 +33,19 @@ export class StreamComponent implements AfterViewInit{
     setTimeout(() => {
       this.resizeVideo()
     }, 1);
+  }
+  reloadVideos(){
+    console.log("TRYLOG")
+    console.log(this.streams)
+    if(this.streams){
+      this.currentStream = this.streams[0];
+      setTimeout(() => {
+        this.videoElement.nativeElement.play()
+      }, 200);
+      
+      //console.log("curreent id = ", this.streams[0]["id"])
+    }
+
   }
   // ngAfterViewChecked(): void {
   //   this.resizeVideo()

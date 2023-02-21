@@ -9,15 +9,10 @@ import { WebsocketAPIService } from '../services/websocket-api.service';
 import { BehaviorSubject } from 'rxjs';
 import SwiperCore, {   Navigation,
   Pagination,
-  Scrollbar,
-  A11y,
-  Virtual,
-  Zoom,
-  Autoplay,
-  Thumbs,
-  Controller, Keyboard, Swiper } from 'swiper';
+  Virtual, Keyboard, Swiper } from 'swiper';
 import { ViewChildren } from '@angular/core';
 import { WSControlAssignment, WSVigilanceFeedResponse } from '../interfaces/wsInterfaces';
+import { CameraWebsocketService } from '../services/camera-websocket.service';
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
@@ -53,6 +48,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       console.log(this.mainWindow)
       this.adjustSwiperSlides()
   }
+  streams: Array<MediaStream> = [];
   swiperHeight = 225;
   swiperWidth = 300;
   streamsToFitIntoDisplay : number = 1;
@@ -62,7 +58,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   connectionType = ConnectionState
   private processing = false;
   slides$ = new BehaviorSubject<string[]>(['']);
-  constructor(private ngZone: NgZone, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService) {
+  constructor(private ngZone: NgZone, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService) {
     const swiper = new Swiper('.swiper', {
       speed: 400,
       spaceBetween: 100,
@@ -96,16 +92,16 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
         }
       }
     })
+    this.cameraWebsocketService.videos$.subscribe((stream: MediaStream) => {
+      this.streams.push(stream);
+    })
   }
 
   adjustSwiperSlides(){
     if(this.speedControlContainer && this.steeringControlContainer) {
       const windowHeight = document.body.offsetHeight;
       const windowWidth = document.body.offsetWidth;
-      console.log("window.height", windowHeight)
-      console.log("window.innerWidth", windowWidth)
       const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
-      console.log("main: ", mainComponentHeight)
       this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${mainComponentHeight}px`);
       const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth - 32; // small width buffer to prevent buggy resizes
       const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight - 32; // -32 ~ 2rem (if default font size of 16)
