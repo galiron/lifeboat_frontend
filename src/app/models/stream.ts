@@ -1,6 +1,6 @@
 import { StreamStatus } from "./streamStatus";
 
-export class Stream{
+export class Stream {
     mediaStream: MediaStream;
     uuid: string;
     audio: boolean;

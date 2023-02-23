@@ -5,5 +5,5 @@
     </div>
 </div>
 <video #videoElement style="width: 100%;" playsinline autoplay
-[srcObject]= "currentStream ? currentStream : undefined">
+[srcObject]= "streams ? streams[currentStreamIndex] : undefined">
 </video>

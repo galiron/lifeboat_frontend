@@ -11,7 +11,9 @@ export class StreamComponent implements AfterViewInit{
   streams!: Array<MediaStream>;
   @Input() set setStreams(streams: Array<MediaStream>) {
     this.streams = streams;
-    this.reloadVideos()
+    if (this.streams){
+      this.reloadVideos()
+    }
   }
   @ViewChild('videoElement') videoElement!: ElementRef;
   @ViewChild('audioElement') audioElement!: ElementRef;
@@ -24,26 +26,17 @@ export class StreamComponent implements AfterViewInit{
   streamHeight: number = 0;
   videoHeight: number = 0;
   videoWidth: number = 0;
-  currentStream: MediaStream | undefined;
+  currentStreamIndex: number = 0;
   constructor(private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2) {
-    if(this.streams)
-    this.currentStream = this.streams[0];
   }
   ngAfterViewInit(): void {
     setTimeout(() => {
       this.resizeVideo()
     }, 1);
   }
-  reloadVideos(){
-    console.log("TRYLOG")
-    console.log(this.streams)
-    if(this.streams){
-      this.currentStream = this.streams[0];
-      setTimeout(() => {
-        this.videoElement.nativeElement.play()
-      }, 200);
-      
-      //console.log("curreent id = ", this.streams[0]["id"])
+  reloadVideos() {
+    if(this.streams && this.videoElement){
+      this.videoElement.nativeElement.play()
     }
 
   }
@@ -53,7 +46,7 @@ export class StreamComponent implements AfterViewInit{
   //   //console.log(this.videoWidth)
   // }
 
-  resizeVideo(){
+  resizeVideo() {
     this.renderer.setStyle(this.videoElement.nativeElement, "height", `${this.videoElement.nativeElement.offsetWidth/16*9}px`);
     this.streamHeight = this.videoElement.nativeElement.offsetWidth/16*9
     this.videoHeight = this.videoElement.nativeElement.offsetHeight;
@@ -65,11 +58,15 @@ export class StreamComponent implements AfterViewInit{
     
   }
 
-  nextSlide(){
+  nextSlide() {
     console.log("next");
+    if (this.currentStreamIndex < this.streams.length - 1)
+    this.currentStreamIndex++;
   }
-  previousSlide(){
+  previousSlide() {
     console.log("previous");
+    if (this.currentStreamIndex > 0)
+    this.currentStreamIndex--;
   }
 
   

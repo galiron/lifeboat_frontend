@@ -19,7 +19,7 @@ export class CameraWebsocketService {
     this.ws.onopen = function() {
       console.log("onopen!");
     }
-    this.ws.onmessage = (message: any) => {
+    this.ws.onmessage = (message: any) => { // message is of type feedListResponse, streamReceiveResponse or sdpRequest
       console.log("getting message")
       try {
         var msg = JSON.parse(message.data);
@@ -38,7 +38,7 @@ export class CameraWebsocketService {
             index = document.location.search.substring(1);
             feed = msg.feedListResponse.feeds[index];
           } */
-          var feedId = feed.id;
+          let feedId : string = feed.id;
           this.ws.send(JSON.stringify(
               {
                 streamReceiveRequest: {
