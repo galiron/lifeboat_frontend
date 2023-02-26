@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { Queue } from 'queue-typescript';
 import { WebsocketAPIService } from './websocket-api.service';
 import { RandomGeneratorService } from './random-generator.service';
+import { IdentityService } from './identity.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +16,9 @@ export class AccessControlService {
   controlRequest$ = new Subject();
   controlRequester = new Queue<WSRequestControlTransferToClient>();
   requesterInProgress?: WSRequestControlTransferToClient | undefined;
-  secretKey: string = "";
   
 
-  constructor(private websocketAPIService: WebsocketAPIService, private websocketConnectorService: WebsocketConnectorService, private randomGeneratorService: RandomGeneratorService) {
+  constructor(private websocketAPIService: WebsocketAPIService, private websocketConnectorService: WebsocketConnectorService, private randomGeneratorService: RandomGeneratorService, private identityService: IdentityService) {
     websocketConnectorService.wsMessage$.subscribe((data: WSMessage) => {
       // unused; listener for general ws Messages
     });
@@ -67,14 +67,19 @@ export class AccessControlService {
 
 
   requestControlTransfer(name: string) : void {
-    this.websocketAPIService.requestControlTransfer(name, this.secretKey)
+    if (this.identityService.password){
+    this.websocketAPIService.requestControlTransfer(name, this.identityService.password)
+    } else {
+      console.log("can't request control without password");
+    }
   }
 
   claimControl() : void {
-    if (this.secretKey == "") {
-       this.secretKey = this.randomGeneratorService.makeRandom();
+    if (this.identityService.password){
+      this.websocketAPIService.claimLock(this.identityService.name, this.identityService.password);
+    } else {
+      console.log("can't request control without password");
     }
-    this.websocketAPIService.claimLock(this.secretKey);
   }
 
   releaseControl() : void {

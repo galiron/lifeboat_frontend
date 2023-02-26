@@ -10,7 +10,7 @@ export class AuthGuardService implements CanActivate{
 
   constructor(private identityService: IdentityService) { }
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    return Boolean(this.identityService.name)
+    return Boolean(this.identityService.name && this.identityService.password)
   }
   
 }

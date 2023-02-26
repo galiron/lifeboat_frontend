@@ -4,6 +4,10 @@
             <mat-label>Please enter your Name and/or affiliation</mat-label>
             <input matInput #formName type="text">
         </mat-form-field>
+        <mat-form-field appearance="fill" style="width: 20rem">
+            <mat-label>Password</mat-label>
+            <input matInput #formPassword type="text">
+        </mat-form-field>
         <button (click)="setNameAndContinue()" style="margin-left: 10px;" color="primary" mat-raised-button>Submit</button>
     </form>
 </div>

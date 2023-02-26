@@ -12,7 +12,7 @@ import { AccessControlService } from 'src/app/services/access-control.service';
 export class TransferRequestComponent {
   requestName: string;
   constructor(@Inject(MAT_SNACK_BAR_DATA) public data: any, private accessControlService: AccessControlService) {
-    this.requestName = accessControlService.requesterInProgress!.name;
+    this.requestName = accessControlService.requesterInProgress!.username;
   }
 
   dismiss() : void {

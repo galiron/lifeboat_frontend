@@ -3,7 +3,8 @@ export interface WSMessage {
 }
 
 export interface WSLockRequest extends WSMessage {
-    secretKey: string;
+    username: string,
+    password: string;
 }
 
 export interface WSMessageResponse extends WSMessage{
@@ -35,7 +36,7 @@ export interface WSControlAssignment extends WSJwtResponse{
 }
 
 export interface WSControlTransfer extends WSMessage{
-    name: string;
+    username: string;
     identifier: string;
 }
 
@@ -56,13 +57,13 @@ export interface Instruction {
 }
 
 export interface WSRequestControlTransferToBackend extends WSMessage{
-    name: string,
-    secretKey: string
+    username: string,
+    password: string
 }
 
 export interface WSRequestControlTransferToClient extends WSMessage{
     identifier: string;
-    name: string
+    username: string
 }
 
 /* Careful, this function is dumb and only checks the interfaceName

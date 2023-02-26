@@ -10,6 +10,8 @@ import { IdentityService } from '../services/identity.service';
 export class LandingpageComponent {
   @ViewChild('formName')
   formName!: ElementRef;
+  @ViewChild('formPassword')
+  formPassword!: ElementRef;
   name!: string;
 
   constructor(private identityService: IdentityService, private router: Router) { 
@@ -18,6 +20,7 @@ export class LandingpageComponent {
 
   setNameAndContinue() : void {
     this.identityService.name = this.formName.nativeElement.value;
+    this.identityService.password = this.formPassword.nativeElement.value;
     this.router.navigateByUrl('/control');
   }
 }

@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class IdentityService {
 
   name!: string;
+  password?: string;
   constructor() { }
 
 }

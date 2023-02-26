@@ -76,9 +76,10 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('steer', data);
   }
 
-  claimLock(secretKey: string) : void{
+  claimLock(username: string, password: string) : void{
     const data = { 
-      "secretKey": secretKey, 
+      "username": username, 
+      "password": password,
       interfaceType: "WSLockRequest"
     } 
     this.websocketConnectorService.emit('lock', data);
@@ -92,12 +93,12 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('unlock', data);
   }
 
-  requestControlTransfer(name: string, secretKey: string) : void{
+  requestControlTransfer(username: string, password: string) : void{
     
     const data: WSRequestControlTransferToBackend = {
-      name,
+      username,
       interfaceType: "WSRequestControlTransfer",
-      secretKey
+      password
     }
     this.websocketConnectorService.emit('requestControlTransfer', data);
   }
