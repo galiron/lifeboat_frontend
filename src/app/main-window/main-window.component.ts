@@ -1,5 +1,5 @@
 import { AccessControlService } from './../services/access-control.service';
-import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnInit, QueryList, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, NgZone, OnInit, QueryList, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TransferRequestComponent } from '../popups/transfer-request/transfer-request.component';
 import { IdentityService } from '../services/identity.service';
@@ -14,6 +14,8 @@ import { ViewChildren } from '@angular/core';
 import { WSControlAssignment, WSVigilanceFeedResponse } from '../interfaces/wsInterfaces';
 import { CameraWebsocketService } from '../services/camera-websocket.service';
 import { Router } from '@angular/router';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
@@ -42,11 +44,10 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   @ViewChild('steeringControlContainer', {read: ElementRef, static:false}) steeringControlContainer!: ElementRef;
   @ViewChildren('swipers') swipers!: QueryList<ElementRef>;
   @ViewChild('mainWindow') mainWindow!: ElementRef;
+  @HostBinding('style.grid-template-rows') rows: SafeStyle = '';
+  @HostBinding('style.grid-template-columns') cols: SafeStyle = '';
   @HostListener('window:resize', ['$event'])
     onResize() {
-      console.log(this.speedControlContainer)
-      console.log(this.toolbar)
-      console.log(this.mainWindow)
       this.adjustSwiperSlides()
   }
   streams: Array<MediaStream> = [];
@@ -57,9 +58,11 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   idleTimer = 0;
   connectionState = "init"
   connectionType = ConnectionState
+  gridCols : number = 0;
+  gridRows : number = 0;
   private processing = false;
   slides$ = new BehaviorSubject<string[]>(['']);
-  constructor(private ngZone: NgZone, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
+  constructor(private deviceService: DeviceDetectorService, private sanitizer: DomSanitizer, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
     const swiper = new Swiper('.swiper', {
       speed: 400,
       spaceBetween: 100,
@@ -99,31 +102,42 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   }
 
   adjustSwiperSlides(){
+    console.log("ADJUSTING!!!")
     if(this.speedControlContainer && this.steeringControlContainer) {
-      const windowHeight = document.body.offsetHeight;
-      const windowWidth = document.body.offsetWidth;
-      const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
-      this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${mainComponentHeight}px`);
-      const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth - 32; // small width buffer to prevent buggy resizes
-      const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight - 32; // -32 ~ 2rem (if default font size of 16)
-      const formatFits = 1.78/(formatWidth/formatHeight) // 16:9 format divided by width to height ration to estimate how many 16:9 streams could comfortably fit into the screen
-      this.streamsToFitIntoDisplay = Math.floor(formatFits);
-      if( this.streamsToFitIntoDisplay == 0){
-        this.streamsToFitIntoDisplay = 1;
+      if (this.deviceService.isMobile()) {
+        this.gridCols = 1;
+        console.log("grid size is now: ", this.gridRows);
+        const windowHeight = document.body.offsetHeight;
+        const windowWidth = document.body.offsetWidth;
+        const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
+        this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${mainComponentHeight}px`);
+        const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth - 32; // small width buffer to prevent buggy resizes
+        const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight - 32; // -32 ~ 2rem (if default font size of 16)
+        const formatFits = 1.78/(formatWidth/formatHeight) // 16:9 format divided by width to height ration to estimate how many 16:9 streams could comfortably fit into the screen
+        this.streamsToFitIntoDisplay = Math.floor(formatFits);
+        if( this.streamsToFitIntoDisplay == 0){
+          this.streamsToFitIntoDisplay = 1;
+        }
+        console.log("fits: ", formatFits - this.streamsToFitIntoDisplay)
+        if( formatFits - this.streamsToFitIntoDisplay < 0.2 && this.streamsToFitIntoDisplay != 1){ // prevent 
+          this.streamsToFitIntoDisplay -=1;
+        }
+        this.gridRows = this.streams.length >= 4 ? 4 : this.streamsToFitIntoDisplay;
+        this.swiperHeight = formatHeight/this.streamsToFitIntoDisplay
+        this.swiperWidth = formatWidth
+        this.swipers.forEach((swiper: any) => {
+          console.log(swiper)
+          //this.renderer.setStyle(swiper, "max-height", `${formatHeight/this.streamsToFitIntoDisplay}px`);
+          //this.renderer.setStyle(swiper, "max-width", `${formatWidth/this.streamsToFitIntoDisplay}px`);
+          
+        })
+      } else {
+        this.gridCols =  Math.floor(Math.sqrt(9));
+        this.gridRows = this.gridCols;
       }
-      console.log("fits: ", formatFits - this.streamsToFitIntoDisplay)
-      if( formatFits - this.streamsToFitIntoDisplay < 0.2){ // prevent 
-        this.streamsToFitIntoDisplay -=1;
-      }
-      this.swiperHeight = formatHeight/this.streamsToFitIntoDisplay
-      this.swiperWidth = formatWidth
-      this.swipers.forEach((swiper: any) => {
-        console.log(swiper)
-        //this.renderer.setStyle(swiper, "max-height", `${formatHeight/this.streamsToFitIntoDisplay}px`);
-        //this.renderer.setStyle(swiper, "max-width", `${formatWidth/this.streamsToFitIntoDisplay}px`);
-        
-      })
       this.changeDetectorRef.detectChanges();
+      this.rows = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridRows +', minmax('+ this.swiperHeight +'px,'+ this.swiperHeight +'px))');
+      this.cols = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridCols +', minmax('+ this.swiperWidth +'px,'+ this.swiperWidth +30 +'px))');
     }
   }
 

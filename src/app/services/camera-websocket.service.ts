@@ -63,7 +63,7 @@ export class CameraWebsocketService {
               setTimeout(() => {
                 console.log(JSON.stringify(event))
                 this.videos$.next(event.stream);
-              }, 900);
+              }, 0);
               //video.play();
             }
           };
