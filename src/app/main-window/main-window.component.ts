@@ -13,6 +13,7 @@ import SwiperCore, {   Navigation,
 import { ViewChildren } from '@angular/core';
 import { WSControlAssignment, WSVigilanceFeedResponse } from '../interfaces/wsInterfaces';
 import { CameraWebsocketService } from '../services/camera-websocket.service';
+import { Router } from '@angular/router';
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
@@ -58,7 +59,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   connectionType = ConnectionState
   private processing = false;
   slides$ = new BehaviorSubject<string[]>(['']);
-  constructor(private ngZone: NgZone, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService) {
+  constructor(private ngZone: NgZone, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
     const swiper = new Swiper('.swiper', {
       speed: 400,
       spaceBetween: 100,
@@ -174,5 +175,10 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   }
   requestControl() : void {
     this.accessControlService.requestControlTransfer(this.identityService.name);
+  }
+
+  backToLogin() : void {
+    this.accessControlService.releaseControl();
+    this.router.navigateByUrl('/');
   }
 }
