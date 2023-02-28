@@ -11,6 +11,7 @@ export class StreamComponent implements AfterViewInit{
   streams!: Array<MediaStream>;
   @Input() set setStreams(streams: Array<MediaStream>) {
     this.streams = streams;
+    console.log("yyy: ", streams)
     if (this.streams){
       this.reloadVideos()
     }
@@ -30,13 +31,18 @@ export class StreamComponent implements AfterViewInit{
   constructor(private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2) {
   }
   ngAfterViewInit(): void {
-    setTimeout(() => {
       this.resizeVideo()
-    }, 1);
+      this.reloadVideos()
   }
   reloadVideos() {
     if(this.streams && this.videoElement){
-      this.videoElement.nativeElement.play()
+      let video = this.videoElement.nativeElement;
+      var isPlaying = video.currentTime > 0 && !video.paused && !video.ended 
+    && video.readyState > video.HAVE_CURRENT_DATA;
+    if (!isPlaying) {
+      video.play();
+    }
+      
     }
 
   }
@@ -51,10 +57,10 @@ export class StreamComponent implements AfterViewInit{
     this.streamHeight = this.videoElement.nativeElement.offsetWidth/16*9
     this.videoHeight = this.videoElement.nativeElement.offsetHeight;
     this.videoWidth = this.videoElement.nativeElement.offsetWidth;
-    console.log("height of stream: ",this.streamHeight)
+    //console.log("height of stream: ",this.streamHeight)
     this.changeDetectorRef.detectChanges();
-    console.log(this.videoHeight)
-    console.log(this.videoWidth)
+    //console.log(this.videoHeight)
+    //console.log(this.videoWidth)
     
   }
 
@@ -62,11 +68,24 @@ export class StreamComponent implements AfterViewInit{
     console.log("next");
     if (this.currentStreamIndex < this.streams.length - 1)
     this.currentStreamIndex++;
+    console.log("current index:", this.currentStreamIndex)
+    console.log("streams: ", this.streams)
+    try{  
+    console.log("streams: ", this.streams[this.currentStreamIndex])
+    } catch (err){
+      console.log(err)
+    }
   }
   previousSlide() {
     console.log("previous");
     if (this.currentStreamIndex > 0)
     this.currentStreamIndex--;
+    console.log("current index:", this.currentStreamIndex)
+    try{  
+      console.log("streams: ", this.streams[this.currentStreamIndex])
+      } catch (err){
+        console.log(err)
+      }
   }
 
   

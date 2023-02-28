@@ -63,9 +63,7 @@
         </ng-template>
     </swiper> -->
     </div>
-    <div style="height: 5rem;" #steeringControlContainer>
-        <div style="display: flex; flex-flow: column nowrap; ">
+    <div style="height: 5rem; display: flex; flex-flow: column nowrap;" #steeringControlContainer>
             <app-steering-control *ngIf="this.connectionState === connectionType.CONNECTED_WITH_CONTROL" style="align-self: center; height: 100%; width: 100%;"></app-steering-control>    
-        </div>
     </div>
 </div>

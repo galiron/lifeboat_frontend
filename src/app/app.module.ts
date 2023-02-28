@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -18,8 +18,13 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { SwiperModule } from 'swiper/angular';
 import { StreamComponent } from './main-window/stream/stream.component';
+import { HttpClientModule } from '@angular/common/http';
+import { ConfigService } from './services/config.service';
 
 const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
+export const configFactory = (configService: ConfigService) => {
+  return () => configService.loadConfig();
+};
 
 @NgModule({
   declarations: [
@@ -42,9 +47,15 @@ const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
     MatFormFieldModule,
     MatInputModule,
     MatToolbarModule,
-    SwiperModule
+    SwiperModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [{
+    provide: APP_INITIALIZER,
+    useFactory: configFactory,
+    deps: [ConfigService],
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

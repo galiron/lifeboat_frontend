@@ -1,20 +1,57 @@
+import { StreamStatus } from './../models/streamStatus';
+import { ConfigService } from './config.service';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { CameraData } from '../interfaces/wsInterfaces';
+import { Stream } from '../models/stream';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CameraWebsocketService {
-  private wsUrl: string = "wss://seamantics.ahoyrtc.com/1f3ca3c3c6580a07fca62e18c2d6f325802b681a" // document.location.host
+
   videos$ = new Subject<any>();
-  ws = new WebSocket(this.wsUrl, "rtc-api-protocol");
+  ws: WebSocket //= new WebSocket(this.wsUrl, "rtc-api-protocol");
+  callbackList : any = new Object;
+  private streams: Array<Stream> = new Array<Stream>
   
 
-  constructor() { 
-    var localDescription : any = null;
-    var remoteDescription : any = null;
+  requestStreams(cameraData: CameraData[]) {
+    for (let camera of cameraData) {
+      const tempuuid = camera.uuid + Date.now()
+      if(!Stream.isContainedInArray(this.streams, camera.uuid)) {
+        const streamstatus : StreamStatus = new StreamStatus(false, true);
+        const stream = new Stream(camera.uuid, false, true, streamstatus);
+        this.streams.push(stream);
+        console.log("pushed stream: ", JSON.stringify(this.streams))
+      }
+
+      console.log("request stream uuid: ", JSON.stringify(camera.uuid))
+      this.ws.send(JSON.stringify(
+        {
+          streamReceiveRequest: {
+            feedId: camera.uuid,
+            audio: {
+              enabled: false
+            },
+            video: {
+              enabled: true,
+            },
+            uuid: tempuuid
+          }
+        }
+      ));
+      this.callbackList[tempuuid] = (result: any) => {
+        console.log("camera: ", camera);
+        console.log("result: ", result);
+      }
+    }
+  }
+
+  constructor(private configService: ConfigService) { 
     var iceCandidates : any = [];
-    var socket : any = this.ws;
+    this.ws = new WebSocket(configService.config.wsUrl, "rtc-api-protocol");
   
     this.ws.onopen = function() {
       console.log("onopen!");
@@ -24,63 +61,48 @@ export class CameraWebsocketService {
       try {
         var msg = JSON.parse(message.data);
         console.log(msg);
-        if (msg.feedListResponse && msg.feedListResponse.feeds && (msg.feedListResponse.feeds.length > 0)) {
-          var index: any = 0;
-          let feed: any;
-          //if (document.location.search.length > 10) {
-            let key = "488fac14-b0d7-4d3d-9ca3-e0e1ad2e2ae7"//document.location.search.substring(1);
-            msg.feedListResponse.feeds.forEach(function(f: any) {
-              if (f.id === key) {
-                feed = f;
-              }
-            });
-          /* } else if (document.location.search.length > 1) {
-            index = document.location.search.substring(1);
-            feed = msg.feedListResponse.feeds[index];
-          } */
-          let feedId : string = feed.id;
-          this.ws.send(JSON.stringify(
-              {
-                streamReceiveRequest: {
-                  feedId: feedId,
-                  audio: {
-                    enabled: true
-                  },
-                  video: {
-                    enabled: true,
-                  },
-                  uuid: "" + Date.now()
-                }
-              }
-          ));
-        } else if (msg.streamReceiveResponse && msg.streamReceiveResponse.success) {
+        if (msg.streamReceiveResponse && msg.streamReceiveResponse.success) {
+          if(this.callbackList[msg.streamReceiveResponse.uuid]) {
+            this.callbackList[msg.streamReceiveResponse.uuid](msg.streamReceiveResponse);
+          }
+
         } else if (msg.sdpRequest) {
+          let key = msg.sdpRequest.feedUuid;
+          let stream: Stream;
+          const indexOfStream = this.streams.findIndex((entry) => {
+            return entry.feedUuid == key
+            console.log("entryid: ", entry.feedUuid)
+            console.log("keyid: ", key)
+          })
+          console.log("found stream at position: ", indexOfStream)
+            // for (let entry of this.streams) {
+            //   if(entry.uuid == key){
+            //     stream = entry;
+            //     this.streams.findIndex
+            //   } 
+            // }
+          //console.log("sdp request: ", msg.sdpRequest)
           var pc: any = new RTCPeerConnection(undefined);
           pc.onaddstream = (event: any) => {
             if (event.stream) {
-              console.log("PROPAGATING STREAAAAM!")
-              console.log(JSON.stringify(event))
-              setTimeout(() => {
-                console.log(JSON.stringify(event))
                 this.videos$.next(event.stream);
-              }, 0);
               //video.play();
             }
           };
           var sendingSocket = this.ws;
           pc.setRemoteDescription(
             new RTCSessionDescription({ type: "offer", sdp: msg.sdpRequest.sdp}),
-            function setRemoteSuccess() {
+            () => { // setRemoteSuccess
               pc.createAnswer(
-                function createAnswerSuccess(description: any) {
-                  localDescription = description;
+                (description: any) => { // createAnswerSuccess
+                  this.streams[indexOfStream].localDescription = description;
                   pc.setLocalDescription(
-                    localDescription,
-                    function setLocalSuccess() {
+                    description,
+                    () => { // setLocalSuccess
                       console.log("local ok");
                       var message = {
                         sdpResponse: {
-                          sdp: localDescription.sdp,
+                          sdp: description.sdp,
                           candidates: iceCandidates,
                           uuid: msg.sdpRequest.uuid
                         }
@@ -110,6 +132,7 @@ export class CameraWebsocketService {
     setTimeout(() => {
       this.start()
     }, 1000);
+    
   }
 
 

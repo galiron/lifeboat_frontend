@@ -33,7 +33,7 @@ export class AccessControlService {
       if (assignment.jwt != ""){
         this.websocketAPIService.jwt = assignment.jwt
       }
-      console.log("jwt is now: ", this.websocketAPIService.jwt)
+      //console.log("jwt is now: ", this.websocketAPIService.jwt)
     });
    }
 

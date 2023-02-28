@@ -33,6 +33,12 @@ export interface WSLockReleaseResponse extends WSMessageResponse{
 }
 
 export interface WSControlAssignment extends WSJwtResponse{
+    cameraData: CameraData [];
+}
+
+export interface CameraData {
+    name: string;
+    uuid: string;
 }
 
 export interface WSControlTransfer extends WSMessage{

@@ -1,16 +1,16 @@
 export class StreamStatus {
-    hasVideo: boolean;
     hasAudio: boolean;
-    constructor(hasVideo?: boolean, hasAudio?: boolean){
-        if(hasVideo){
-            this.hasVideo = true;
-        } else {
-            this.hasVideo = false;
-        }
+    hasVideo: boolean;
+    constructor(hasAudio?: boolean, hasVideo?: boolean){
         if(hasAudio){
             this.hasAudio = false;
         } else {
             this.hasAudio = false;
+        }
+        if(hasVideo){
+            this.hasVideo = true;
+        } else {
+            this.hasVideo = false;
         }
     }
 }

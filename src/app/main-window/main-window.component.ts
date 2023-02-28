@@ -16,6 +16,7 @@ import { CameraWebsocketService } from '../services/camera-websocket.service';
 import { Router } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
+import { CameraService } from '../services/camera.service';
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
@@ -36,7 +37,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
         this.websocketAPIService.feedVigilanceControl();
       }
       this.prevDate = date;
-      console.log(this.slides$);
+      //console.log(this.slides$);
     }
   }
   @ViewChild('toolbar', {read: ElementRef, static:false}) toolbar!: ElementRef;
@@ -62,7 +63,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   gridRows : number = 0;
   private processing = false;
   slides$ = new BehaviorSubject<string[]>(['']);
-  constructor(private deviceService: DeviceDetectorService, private sanitizer: DomSanitizer, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
+  constructor(private deviceService: DeviceDetectorService, private sanitizer: DomSanitizer, private cameraService: CameraService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
     const swiper = new Swiper('.swiper', {
       speed: 400,
       spaceBetween: 100,
@@ -76,20 +77,20 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     });
     this.websocketConnectorService.wsConnectionState$.subscribe((connectionState: string) => {
       this.connectionState = connectionState;
-      console.log("state is: ",this.connectionState)
+
       if((connectionState === this.connectionType.DISCONNECTED) || (connectionState === this.connectionType.CONNECTED_WITHOUT_CONTROL)) {
         this.idleTimer = 0
       }
-      console.log("state: ", connectionState)
+
     });
     this.websocketConnectorService.wSVigilanceFeedResponse$.subscribe((wSVigilanceFeedResponse: WSVigilanceFeedResponse) => {
-      console.log("vigilresponse: ", wSVigilanceFeedResponse)
+
       if (wSVigilanceFeedResponse.success === true) {
         this.idleTimer = 30;
       }
     });
     this.websocketConnectorService.wsControlAssignment$.subscribe((assignment: WSControlAssignment) => {
-      console.log("setTimer")
+
       if(assignment.success) {
         if(this.idleTimer === 0){
           this.setIdleTimer(30);
@@ -97,6 +98,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       }
     })
     this.cameraWebsocketService.videos$.subscribe((stream: MediaStream) => {
+      console.log("xxx:  ",stream);
       this.streams.push(stream);
     })
   }
