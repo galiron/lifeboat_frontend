@@ -136,8 +136,8 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
         this.gridRows = this.gridCols;
       }
       this.changeDetectorRef.detectChanges();
-      this.rows = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridRows +', minmax('+ this.swiperHeight +'px,'+ this.swiperHeight +'px))');
-      this.cols = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridCols +', minmax('+ this.swiperWidth +'px,'+ this.swiperWidth +30 +'px))');
+      this.rows = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridRows +', minmax('+ this.swiperHeight +'px,'+ this.swiperHeight + 0 +'px))');
+      this.cols = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridCols +', minmax('+ this.swiperWidth +'px,'+ this.swiperWidth + 0 +'px))');
     }
   }
 

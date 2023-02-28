@@ -32,7 +32,7 @@
                 </app-stream>
             </div>
         </div> -->
-        <div style="display: grid; margin-top: 2rem;" [style.grid-template-rows]="rows" [style.grid-template-columns]="cols">
+        <div style="display: grid; margin-top: 2rem; justify-items: center;" [style.grid-template-rows]="rows" [style.grid-template-columns]="cols">
             <div #swipers *ngFor="let _ of [].constructor(9)"
                 [style.height.px]="this.swiperHeight"
                 [style.width.px]="this.swiperWidth"
