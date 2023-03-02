@@ -25,6 +25,9 @@ SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
 @Component({
   selector: 'app-main-window',
   templateUrl: './main-window.component.html',
+  host: {
+    class: 'maxSize'
+  },
   styleUrls: ['./main-window.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
@@ -41,8 +44,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     }
   }
   @ViewChild('toolbar', {read: ElementRef, static:false}) toolbar!: ElementRef;
-  @ViewChild('speedControlContainer', {read: ElementRef, static:false}) speedControlContainer!: ElementRef;
   @ViewChild('steeringControlContainer', {read: ElementRef, static:false}) steeringControlContainer!: ElementRef;
+  @ViewChild('speedControlContainer', {read: ElementRef, static:false}) speedControlContainer!: ElementRef;
+  @ViewChild('grid', {read: ElementRef, static:false}) grid!: ElementRef;
   @ViewChildren('swipers') swipers!: QueryList<ElementRef>;
   @ViewChild('mainWindow') mainWindow!: ElementRef;
   @HostBinding('style.grid-template-rows') rows: SafeStyle = '';
@@ -52,8 +56,8 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       this.adjustSwiperSlides()
   }
   streams: Array<MediaStream> = [];
-  swiperHeight = 225;
-  swiperWidth = 300;
+  cellWidth! : number;
+  cellHeight! : number;
   streamsToFitIntoDisplay : number = 1;
   prevDate: number = 0;
   idleTimer = 0;
@@ -63,11 +67,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   gridRows : number = 0;
   private processing = false;
   slides$ = new BehaviorSubject<string[]>(['']);
+  cameraWebSocketConnected: boolean = false;
   constructor(private deviceService: DeviceDetectorService, private sanitizer: DomSanitizer, private cameraService: CameraService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
-    const swiper = new Swiper('.swiper', {
-      speed: 400,
-      spaceBetween: 100,
-    });
+
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
       if (this.processing === false) {
@@ -96,6 +98,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
           this.setIdleTimer(30);
         }
       }
+      
     })
     this.cameraWebsocketService.videos$.subscribe((stream: MediaStream) => {
       console.log("xxx:  ",stream);
@@ -104,53 +107,44 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   }
 
   adjustSwiperSlides(){
-    console.log("ADJUSTING!!!")
-    if(this.speedControlContainer && this.steeringControlContainer) {
-      if (this.deviceService.isMobile()) {
-        this.gridCols = 1;
-        console.log("grid size is now: ", this.gridRows);
-        const windowHeight = document.body.offsetHeight;
-        const windowWidth = document.body.offsetWidth;
-        const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
-        this.renderer.setStyle(this.mainWindow.nativeElement, "height", `${mainComponentHeight}px`);
-        const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth - 32; // small width buffer to prevent buggy resizes
-        const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight - 32; // -32 ~ 2rem (if default font size of 16)
-        const formatFits = 1.78/(formatWidth/formatHeight) // 16:9 format divided by width to height ration to estimate how many 16:9 streams could comfortably fit into the screen
-        this.streamsToFitIntoDisplay = Math.floor(formatFits);
-        if( this.streamsToFitIntoDisplay == 0){
-          this.streamsToFitIntoDisplay = 1;
+   
+      if(this.speedControlContainer && this.steeringControlContainer) {
+        if (this.deviceService.isMobile()) {
+  
+        } else {
+          this.gridCols =  Math.floor(Math.sqrt(9));
+          this.gridRows = this.gridCols;
+          console.log("w")
+          console.log("w", document.body.offsetHeight)
+          console.log("w", document.body.offsetWidth)
+          console.log("w", this.toolbar.nativeElement.offsetHeight)
+          console.log("wsteer", (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight)
+          console.log("wspeed",  (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth)
+          console.log("w")
+          const windowHeight = document.body.offsetHeight;
+          const windowWidth = document.body.offsetWidth;
+          const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
+          const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth; // small width buffer to prevent buggy resizes
+          const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight; // -32 ~ 2rem (if default font size of 16)
+          this.cellWidth = ((formatWidth) / this.gridCols) - (this.gridCols-1) * 16
+          this.cellHeight = ((formatHeight) / this.gridRows) - (this.gridRows-1) * 16
+          console.log("width of cell : ", this.cellWidth)
+          console.log("height of cell : ", this.cellHeight)
         }
-        console.log("fits: ", formatFits - this.streamsToFitIntoDisplay)
-        if( formatFits - this.streamsToFitIntoDisplay < 0.2 && this.streamsToFitIntoDisplay != 1){ // prevent 
-          this.streamsToFitIntoDisplay -=1;
-        }
-        this.gridRows = this.streams.length >= 4 ? 4 : this.streamsToFitIntoDisplay;
-        this.swiperHeight = formatHeight/this.streamsToFitIntoDisplay
-        this.swiperWidth = formatWidth
-        this.swipers.forEach((swiper: any) => {
-          console.log(swiper)
-          //this.renderer.setStyle(swiper, "max-height", `${formatHeight/this.streamsToFitIntoDisplay}px`);
-          //this.renderer.setStyle(swiper, "max-width", `${formatWidth/this.streamsToFitIntoDisplay}px`);
-          
-        })
-      } else {
-        this.gridCols =  Math.floor(Math.sqrt(9));
-        this.gridRows = this.gridCols;
+        this.rows = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridRows +', minmax('+ this.cellHeight +'px, auto))');
+        this.cols = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridCols +', minmax('+ this.cellWidth +'px, auto))');
       }
       this.changeDetectorRef.detectChanges();
-      this.rows = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridRows +', minmax('+ this.swiperHeight +'px,'+ this.swiperHeight + 0 +'px))');
-      this.cols = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridCols +', minmax('+ this.swiperWidth +'px,'+ this.swiperWidth + 0 +'px))');
-    }
   }
 
 
 
   ngAfterViewInit(): void {
     if (this.mainWindow){
-      setTimeout(() => {
+      console.log("ADJUST")
         this.adjustSwiperSlides();
-      }, 0);
     }
+    this.changeDetectorRef.detectChanges();
   }
 
   setIdleTimer(seconds: number){
@@ -159,7 +153,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       this.idleTimer--;
       setTimeout(() => {
         this.setIdleTimer(this.idleTimer);
-      }, 1000);
+      }, 500);
     }
   }
 

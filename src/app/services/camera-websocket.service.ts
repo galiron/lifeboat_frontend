@@ -15,6 +15,7 @@ export class CameraWebsocketService {
   ws: WebSocket //= new WebSocket(this.wsUrl, "rtc-api-protocol");
   callbackList : any = new Object;
   private streams: Array<Stream> = new Array<Stream>
+  isReady$: Subject<boolean> = new Subject();
   
 
   requestStreams(cameraData: CameraData[]) {
@@ -50,11 +51,13 @@ export class CameraWebsocketService {
   }
 
   constructor(private configService: ConfigService) { 
+    configService.loadConfig()
     var iceCandidates : any = [];
     this.ws = new WebSocket(configService.config.wsUrl, "rtc-api-protocol");
   
-    this.ws.onopen = function() {
+    this.ws.onopen = () => {
       console.log("onopen!");
+      this.isReady$.next(true)
     }
     this.ws.onmessage = (message: any) => { // message is of type feedListResponse, streamReceiveResponse or sdpRequest
       console.log("getting message")

@@ -1,8 +1,10 @@
-<mat-toolbar #toolbar>
-    <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITH_CONTROL" mat-button style="flex: 1 1 auto;" (click)="releaseControl()">release control</button>
-    <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITHOUT_CONTROL" mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
-    <button mat-button style="flex: 1 1 auto;" (click)="backToLogin()">back to login</button>
-</mat-toolbar>
+<div>
+    <mat-toolbar #toolbar style="display: default;">
+        <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITH_CONTROL" mat-button style="flex: 1 1 auto;" (click)="releaseControl()">release control</button>
+        <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITHOUT_CONTROL" mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
+        <button mat-button style="flex: 1 1 auto;" (click)="backToLogin()">back to login</button>
+    </mat-toolbar>
+</div>
 <div style="position: absolute; width: 100%;">
     <div style="flex-flow: row;">
         <div style="display: flex; float: left; margin: 0.5rem; font-family: 'Roboto', sans-serif;" 
@@ -21,49 +23,18 @@
         <div style="display: flex; flex-flow: row nowrap; min-width: 5rem;" #speedControlContainer>
             <app-speed-control *ngIf="this.connectionState === connectionType.CONNECTED_WITH_CONTROL" style="align-self: center; height: 100%; width: 100%;"></app-speed-control>
         </div>
-        <!-- <div style="display: flex; flex-flow: column; margin-top: 2rem; height: 100%; width: 100%;">
-            <div #swipers *ngFor="let _ of [].constructor(this.streamsToFitIntoDisplay)"
-                [style.height.px]="this.swiperHeight"
-                [style.width.px]="this.swiperWidth"
-                style="display: flex; flex-flow: column; align-items: center; justify-content: center;"
-                >
-                <app-stream [setStreams] = streams style="width: 100%; height: 100%; display: flex;">
-
-                </app-stream>
-            </div>
-        </div> -->
-        <div style="display: grid; margin-top: 2rem; justify-items: center;" [style.grid-template-rows]="rows" [style.grid-template-columns]="cols">
+        <div #grid style="display: grid; width: 100%; height: 100%; margin-top: 2rem; justify-items: center; align-items: center; gap: 16px 16px;" [style.grid-template-rows]="rows" [style.grid-template-columns]="cols">
             <div #swipers *ngFor="let _ of [].constructor(9)"
-                [style.height.px]="this.swiperHeight"
-                [style.width.px]="this.swiperWidth"
-                style="display: flex; flex-flow: column; align-items: center; justify-content: center;"
+
+                style="display: flex; flex-flow: column; align-items: center; justify-content: center; height: 100%; width: 100%;"
                 >
-                <app-stream [setStreams] = streams style="width: fit-content; height: fit-content; display: flex;">
+                <app-stream [setStreams] = "streams" [videoWidthBinding]="cellWidth" [videoHeightBinding]="cellHeight" style="width: 1fr; height: 1fr; display: flex;">
 
                 </app-stream>
             </div>
         </div>
-        
-        <!-- <swiper style="margin-top: 2rem;"
-        [virtual]="false"
-        [slidesPerView]="1"
-        [spaceBetween]="50"
-        [navigation]="true"
-        [pagination]="{ type: 'fraction' }"
-        [centeredSlides]="true"
-        [keyboard]="{
-            enabled: true
-        }"
-        class="my-swiper"
-        >
-        <ng-template swiperSlide *ngFor="let slide of this.slides$ | async; index as i">
-            <div class="swiper-slide-container">
-            {{ slide }}
-            </div>
-        </ng-template>
-    </swiper> -->
     </div>
-    <div style="height: 5rem; display: flex; flex-flow: column nowrap;" #steeringControlContainer>
+    <div style="height: 5rem; min-height: 5rem; display: flex; flex-flow: column nowrap;" #steeringControlContainer>
             <app-steering-control *ngIf="this.connectionState === connectionType.CONNECTED_WITH_CONTROL" style="align-self: center; height: 100%; width: 100%;"></app-steering-control>    
     </div>
 </div>

@@ -13,7 +13,9 @@ export class CameraService {
       console.log("cameras: ", assignment.cameraData)
       console.log("cameras success: ", assignment.success)
       if(assignment.success && assignment.cameraData) {
-        this.cameraWebsocketService.requestStreams(assignment.cameraData);
+        setTimeout(() => {
+          this.cameraWebsocketService.requestStreams(assignment.cameraData);
+        }, 800);
       }
     })
   }

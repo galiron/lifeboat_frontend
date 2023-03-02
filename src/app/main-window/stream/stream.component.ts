@@ -1,4 +1,5 @@
 import { Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit, AfterViewChecked, ChangeDetectorRef, HostListener, Renderer2 } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { timeout } from 'rxjs';
 import { Stream } from 'src/app/models/stream';
 
@@ -9,11 +10,23 @@ import { Stream } from 'src/app/models/stream';
 })
 export class StreamComponent implements AfterViewInit{
   streams!: Array<MediaStream>;
+  videoWidth!: number;
+  videoHeight!: number;
+  @Input() set videoWidthBinding(value: number) {
+    this.videoWidth = value;
+    this.resizeVideo()
+    this.reloadVideos()
+  }
+  @Input() set videoHeightBinding(value: number) {
+    this.videoHeight = value;
+    this.resizeVideo()
+    this.reloadVideos()
+  }
   @Input() set setStreams(streams: Array<MediaStream>) {
     this.streams = streams;
-    console.log("yyy: ", streams)
     if (this.streams){
       this.reloadVideos()
+      this.resizeVideo()
     }
   }
   @ViewChild('videoElement') videoElement!: ElementRef;
@@ -22,19 +35,18 @@ export class StreamComponent implements AfterViewInit{
   onResize() {
     setTimeout(() => {
       this.resizeVideo()
+      this.reloadVideos()
     }, 1);
   }
-  streamHeight: number = 0;
-  videoHeight: number = 0;
-  videoWidth: number = 0;
   currentStreamIndex: number = 0;
-  constructor(private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2) {
+  constructor(private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private sanitizer: DomSanitizer,) {
   }
   ngAfterViewInit(): void {
       this.resizeVideo()
       this.reloadVideos()
   }
   reloadVideos() {
+    this.changeDetectorRef.detectChanges();
     if(this.streams && this.videoElement){
       let video = this.videoElement.nativeElement;
       var isPlaying = video.currentTime > 0 && !video.paused && !video.ended 
@@ -46,46 +58,28 @@ export class StreamComponent implements AfterViewInit{
     }
 
   }
-  // ngAfterViewChecked(): void {
-  //   this.resizeVideo()
-  //   //console.log(this.videoHeight)
-  //   //console.log(this.videoWidth)
-  // }
 
   resizeVideo() {
-    this.renderer.setStyle(this.videoElement.nativeElement, "height", `${this.videoElement.nativeElement.offsetWidth/16*9}px`);
-    this.streamHeight = this.videoElement.nativeElement.offsetWidth/16*9
-    this.videoHeight = this.videoElement.nativeElement.offsetHeight;
-    this.videoWidth = this.videoElement.nativeElement.offsetWidth;
-    //console.log("height of stream: ",this.streamHeight)
-    this.changeDetectorRef.detectChanges();
-    //console.log(this.videoHeight)
-    //console.log(this.videoWidth)
-    
+    if(this.videoElement){
+      this.renderer.setStyle(this.videoElement.nativeElement, "width", `${this.videoWidth}px`);
+      this.renderer.setStyle(this.videoElement.nativeElement, "height", `${this.videoHeight}px`);
+      console.log("ACTUAL WIDTH : ", this.videoWidth)
+      console.log("ACTUAL HEIGHT : ", this.videoHeight)
+      this.videoHeight = this.videoElement.nativeElement.offsetHeight;
+      this.videoWidth = this.videoElement.nativeElement.offsetWidth;
+      this.changeDetectorRef.detectChanges();
+    }    
   }
 
   nextSlide() {
     console.log("next");
     if (this.currentStreamIndex < this.streams.length - 1)
     this.currentStreamIndex++;
-    console.log("current index:", this.currentStreamIndex)
-    console.log("streams: ", this.streams)
-    try{  
-    console.log("streams: ", this.streams[this.currentStreamIndex])
-    } catch (err){
-      console.log(err)
-    }
   }
   previousSlide() {
     console.log("previous");
     if (this.currentStreamIndex > 0)
     this.currentStreamIndex--;
-    console.log("current index:", this.currentStreamIndex)
-    try{  
-      console.log("streams: ", this.streams[this.currentStreamIndex])
-      } catch (err){
-        console.log(err)
-      }
   }
 
   
