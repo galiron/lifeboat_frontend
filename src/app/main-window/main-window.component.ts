@@ -55,6 +55,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     onResize() {
       this.adjustSwiperSlides()
   }
+  
+  gridSize: number[] = [1,2,3];
+  gridSizeValue: number = 2;
   streams: Array<MediaStream> = [];
   cellWidth! : number;
   cellHeight! : number;
@@ -106,14 +109,20 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     })
   }
 
+  changeGridSize(event: any){
+    setTimeout(() => {
+      this.adjustSwiperSlides()
+    }, 5);
+  }
+
   adjustSwiperSlides(){
    
       if(this.speedControlContainer && this.steeringControlContainer) {
         if (this.deviceService.isMobile()) {
   
         } else {
-          this.gridCols =  Math.floor(Math.sqrt(9));
-          this.gridRows = this.gridCols;
+          this.gridCols = this.gridSizeValue
+          this.gridRows = this.gridSizeValue
           console.log("w")
           console.log("w", document.body.offsetHeight)
           console.log("w", document.body.offsetWidth)
@@ -125,7 +134,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
           const windowWidth = document.body.offsetWidth;
           const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
           const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth; // small width buffer to prevent buggy resizes
-          const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight; // -32 ~ 2rem (if default font size of 16)
+          const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight -32; // -32 ~ 2rem for top margin (if default font size of 16)
           this.cellWidth = ((formatWidth) / this.gridCols) - (this.gridCols-1) * 16
           this.cellHeight = ((formatHeight) / this.gridRows) - (this.gridRows-1) * 16
           console.log("width of cell : ", this.cellWidth)

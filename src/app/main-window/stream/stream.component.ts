@@ -73,13 +73,18 @@ export class StreamComponent implements AfterViewInit{
 
   nextSlide() {
     console.log("next");
-    if (this.currentStreamIndex < this.streams.length - 1)
-    this.currentStreamIndex++;
+    if (this.currentStreamIndex < this.streams.length - 1) {
+      this.currentStreamIndex++;
+    } else {
+      this.currentStreamIndex = 0
+    }
   }
   previousSlide() {
     console.log("previous");
-    if (this.currentStreamIndex > 0)
-    this.currentStreamIndex--;
+    if (this.currentStreamIndex > 0) {
+      this.currentStreamIndex--;
+    }
+    this.currentStreamIndex = this.setStreams.length - 1
   }
 
   

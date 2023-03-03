@@ -20,6 +20,8 @@ import { SwiperModule } from 'swiper/angular';
 import { StreamComponent } from './main-window/stream/stream.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ConfigService } from './services/config.service';
+import {MatSelectModule} from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 
 const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
 export const configFactory = (configService: ConfigService) => {
@@ -47,8 +49,10 @@ export const configFactory = (configService: ConfigService) => {
     MatFormFieldModule,
     MatInputModule,
     MatToolbarModule,
+    MatSelectModule,
     SwiperModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [{
     provide: APP_INITIALIZER,
