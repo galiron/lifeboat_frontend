@@ -77,8 +77,9 @@ export class StreamComponent implements AfterViewInit{
   previousSlide() {
     if (this.currentStreamIndex > 0) {
       this.currentStreamIndex--;
+    } else {
+      this.currentStreamIndex = this.streams.length - 1
     }
-    this.currentStreamIndex = this.setStreams.length - 1
   }
 
   
