@@ -1,5 +1,4 @@
 import { StreamStatus } from '../../models/streamStatus';
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { CameraData } from '../../interfaces/wsInterfaces';
@@ -15,7 +14,7 @@ export class CameraWebsocketService {
   ws: WebSocket //= new WebSocket(this.wsUrl, "rtc-api-protocol");
   callbackList : any = new Object;
   private streams: Array<Stream> = new Array<Stream>
-  isReady$: Subject<boolean> = new Subject();
+  isReady$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   
 
   requestStreams(cameraData: CameraData[]) {
@@ -25,10 +24,8 @@ export class CameraWebsocketService {
         const streamstatus : StreamStatus = new StreamStatus(false, true);
         const stream = new Stream(camera.uuid, false, true, streamstatus);
         this.streams.push(stream);
-        console.log("pushed stream: ", JSON.stringify(this.streams))
       }
 
-      console.log("request stream uuid: ", JSON.stringify(camera.uuid))
       this.ws.send(JSON.stringify(
         {
           streamReceiveRequest: {
@@ -44,14 +41,14 @@ export class CameraWebsocketService {
         }
       ));
       this.callbackList[tempuuid] = (result: any) => {
-        console.log("camera: ", camera);
-        console.log("result: ", result);
+        // log messages
+        // console.log("camera: ", camera);
+        // console.log("result: ", result);
       }
     }
   }
 
   constructor(private configService: ConfigService) { 
-    configService.loadConfig()
     var iceCandidates : any = [];
     this.ws = new WebSocket(configService.config.wsUrl, "rtc-api-protocol");
   
@@ -74,22 +71,12 @@ export class CameraWebsocketService {
           let stream: Stream;
           const indexOfStream = this.streams.findIndex((entry) => {
             return entry.feedUuid == key
-            console.log("entryid: ", entry.feedUuid)
-            console.log("keyid: ", key)
+
           })
-          console.log("found stream at position: ", indexOfStream)
-            // for (let entry of this.streams) {
-            //   if(entry.uuid == key){
-            //     stream = entry;
-            //     this.streams.findIndex
-            //   } 
-            // }
-          //console.log("sdp request: ", msg.sdpRequest)
           var pc: any = new RTCPeerConnection(undefined);
           pc.onaddstream = (event: any) => {
             if (event.stream) {
                 this.videos$.next(event.stream);
-              //video.play();
             }
           };
           var sendingSocket = this.ws;

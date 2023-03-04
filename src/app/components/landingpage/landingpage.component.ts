@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { CameraWebsocketService } from '../../services/websocketServices/camera-websocket.service';
 import { IdentityService } from '../../services/dataServices/identity.service';
 
 @Component({
@@ -8,7 +7,7 @@ import { IdentityService } from '../../services/dataServices/identity.service';
   templateUrl: './landingpage.component.html',
   styleUrls: ['./landingpage.component.scss']
 })
-export class LandingpageComponent {
+export class LandingpageComponent implements AfterViewInit{
   @ViewChild('formName')
   formName!: ElementRef;
   @ViewChild('formPassword')
@@ -16,12 +15,14 @@ export class LandingpageComponent {
   name!: string;
   cameraWebSocketConnected : boolean = false;
 
-  constructor(private identityService: IdentityService, private router: Router) { 
-/*     this.cameraWebsocketService.isReady$.subscribe( (ready: boolean) => {
-      if (ready) {
-        this.cameraWebSocketConnected = ready
-      }
-    }); */
+  constructor(private identityService: IdentityService, private router: Router, private changeDetectorRef: ChangeDetectorRef)  {
+
+   }
+  ngAfterViewInit(): void {
+    if(this.identityService.password) {
+      this.formName.nativeElement.value = this.identityService.name;
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
   setNameAndContinue() : void {

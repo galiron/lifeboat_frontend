@@ -1,12 +1,6 @@
 import {  AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, NgZone, OnInit, QueryList, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BehaviorSubject } from 'rxjs';
-import SwiperCore, {   Navigation,
-  Pagination,
-  Virtual, Keyboard, Swiper } from 'swiper';
-import { ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { ConnectionState } from 'src/app/enums/connectionstate';
 import { WSVigilanceFeedResponse, WSControlAssignment } from 'src/app/interfaces/wsInterfaces';
@@ -19,9 +13,6 @@ import { WebsocketAPIService } from 'src/app/services/websocketServices/websocke
 import { WebsocketConnectorService } from 'src/app/services/websocketServices/websocketConnector.service';
 import { TransferRequestComponent } from '../shared/popups/transfer-request/transfer-request.component';
 
-// install Swiper modules
-SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
-
 
 @Component({
   selector: 'app-main-window',
@@ -32,7 +23,7 @@ SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
   styleUrls: ['./main-window.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class MainWindowComponent implements OnInit, AfterViewInit {
+export class MainWindowComponent implements AfterViewInit {
   @HostListener('document:mousemove', ['$event']) 
   onMouseMove(e: any) {
     const date = new Date().getTime();
@@ -41,14 +32,12 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
         this.websocketAPIService.feedVigilanceControl();
       }
       this.prevDate = date;
-      //console.log(this.slides$);
     }
   }
   @ViewChild('toolbar', {read: ElementRef, static:false}) toolbar!: ElementRef;
   @ViewChild('steeringControlContainer', {read: ElementRef, static:false}) steeringControlContainer!: ElementRef;
   @ViewChild('speedControlContainer', {read: ElementRef, static:false}) speedControlContainer!: ElementRef;
   @ViewChild('grid', {read: ElementRef, static:false}) grid!: ElementRef;
-  @ViewChildren('swipers') swipers!: QueryList<ElementRef>;
   @ViewChild('mainWindow') mainWindow!: ElementRef;
   @HostBinding('style.grid-template-rows') rows: SafeStyle = '';
   @HostBinding('style.grid-template-columns') cols: SafeStyle = '';
@@ -71,10 +60,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   gridCols : number = 0;
   gridRows : number = 0;
   private processing = false;
-  slides$ = new BehaviorSubject<string[]>(['']);
   isMobile: boolean = true;
   cameraWebSocketConnected: boolean = false;
-  constructor(private deviceService: DeviceDetectorService, private sanitizer: DomSanitizer, private cameraService: CameraRequestService, private responsiveService: ResponsiveService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
+  constructor( private sanitizer: DomSanitizer, private cameraService: CameraRequestService, private responsiveService: ResponsiveService, private changeDetectorRef: ChangeDetectorRef, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
       if (this.processing === false) {
@@ -106,7 +94,6 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       
     })
     this.cameraWebsocketService.videos$.subscribe((stream: MediaStream) => {
-      console.log("xxx:  ",stream);
       this.streams.push(stream);
     })
     this.responsiveService.getMobileStatus().subscribe( (isMobile) => {
@@ -132,7 +119,6 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
           this.gridCols = 1;
           this.gridRows = 4
         } else {
-          console.log("REEEEDDDOOOO")
           this.gridCols = this.gridSizeValue
           this.gridRows = this.gridSizeValue
         }
@@ -153,10 +139,8 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.mainWindow){
-      console.log("ADJUST")
         this.adjustSwiperSlides();
     }
-    this.changeDetectorRef.detectChanges();
   }
 
   setIdleTimer(seconds: number){
@@ -169,16 +153,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngOnInit(): void {
-    this.slides$.next(
-      Array.from({ length: 20 }).map((el, index) => `Slide ${index + 1}`)
-    );
-  }
-
   processRequester() : void {
-    this.accessControlService.popNextRequester();
-    console.log("next requester is: ", JSON.stringify(this.accessControlService.requesterInProgress))
-    if(this.accessControlService.requesterInProgress != undefined) {
+    const couldPopRequester = this.accessControlService.popNextRequester();
+    if(couldPopRequester == true) {
       const snackBar = this.snackBar.openFromComponent(TransferRequestComponent, {
         data: {preClose: () => {
           snackBar.dismiss()

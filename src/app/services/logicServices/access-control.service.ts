@@ -31,15 +31,15 @@ export class AccessControlService {
       if (assignment.jwt != ""){
         this.websocketAPIService.jwt = assignment.jwt
       }
-      //console.log("jwt is now: ", this.websocketAPIService.jwt)
     });
    }
 
-  popNextRequester() : void {
+  popNextRequester() : boolean {
     if(this.controlRequester.length > 0){
       this.requesterInProgress = this.controlRequester.dequeue();
+      return true
     } else{
-      this.requesterInProgress = undefined;
+      return false;
     }
   }
 
@@ -53,9 +53,10 @@ export class AccessControlService {
   }
 
   transferControl() : void {
-    let requester = this.requesterInProgress
+    let requester = this.requesterInProgress;
     if (requester) {
       this.websocketAPIService.transferControl(requester.identifier);
+      this.requesterInProgress = undefined;
     } else {
       this.websocketAPIService.transferControl(undefined);
     }

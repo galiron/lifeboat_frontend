@@ -13,9 +13,10 @@ export class LoadingpageComponent {
 
   private backendServiceConnectionEstablished: boolean = false;
   private cameraServiceConnectionEstablished: boolean = false;
+  private alreadyConnected = false;
   constructor(private websocketConnectorService: WebsocketConnectorService, private cameraWebsocketService: CameraWebsocketService, private router: Router){
     this.websocketConnectorService.wsConnectionState$.subscribe( (ready) => {
-      if (ready === ConnectionState.CONNECTED_WITHOUT_CONTROL) {
+      if (this.backendServiceConnectionEstablished == false && ready == ConnectionState.CONNECTED_WITHOUT_CONTROL ) {
         this.backendServiceConnectionEstablished = true;
         this.checkIfPageIsLoaded();
       }
@@ -26,10 +27,15 @@ export class LoadingpageComponent {
         this.checkIfPageIsLoaded();
       }
     })
+    this.websocketConnectorService.wsConnectionEstablished$.subscribe( (alreadyEstablished) => {
+      this.alreadyConnected = alreadyEstablished;
+      this.checkIfPageIsLoaded();
+    })
+    this.checkIfPageIsLoaded()
   }
 
   checkIfPageIsLoaded() : void {
-    if (this.backendServiceConnectionEstablished && this.cameraServiceConnectionEstablished){
+    if ((this.backendServiceConnectionEstablished && this.cameraServiceConnectionEstablished) || this.alreadyConnected){
       this.router.navigateByUrl('/landing');
     }
   }

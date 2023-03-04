@@ -12,7 +12,6 @@ export class LoadingConfigPageComponent {
   constructor(private configService: ConfigService, private router: Router) {
     configService.config$.subscribe( (configLoaded) => {
       if (configLoaded) {
-        console.log("LOADED CONFIG: ", JSON.stringify(configService.config))
         this.router.navigateByUrl('/loadingStreams');
       }
     })

@@ -47,24 +47,20 @@ export class StreamComponent implements AfterViewInit{
   }
   reloadVideos() {
     this.changeDetectorRef.detectChanges();
-    if(this.streams && this.videoElement){
+    if(this.streams && this.videoElement) {
       let video = this.videoElement.nativeElement;
       var isPlaying = video.currentTime > 0 && !video.paused && !video.ended 
-    && video.readyState > video.HAVE_CURRENT_DATA;
-    if (!isPlaying) {
-      video.play();
+          && video.readyState > video.HAVE_CURRENT_DATA;
+      if (!isPlaying) {
+        video.play();
+      } 
     }
-      
-    }
-
   }
 
   resizeVideo() {
     if(this.videoElement){
       this.renderer.setStyle(this.videoElement.nativeElement, "width", `${this.videoWidth}px`);
       this.renderer.setStyle(this.videoElement.nativeElement, "height", `${this.videoHeight}px`);
-      console.log("ACTUAL WIDTH : ", this.videoWidth)
-      console.log("ACTUAL HEIGHT : ", this.videoHeight)
       this.videoHeight = this.videoElement.nativeElement.offsetHeight;
       this.videoWidth = this.videoElement.nativeElement.offsetWidth;
       this.changeDetectorRef.detectChanges();
@@ -72,7 +68,6 @@ export class StreamComponent implements AfterViewInit{
   }
 
   nextSlide() {
-    console.log("next");
     if (this.currentStreamIndex < this.streams.length - 1) {
       this.currentStreamIndex++;
     } else {
@@ -80,7 +75,6 @@ export class StreamComponent implements AfterViewInit{
     }
   }
   previousSlide() {
-    console.log("previous");
     if (this.currentStreamIndex > 0) {
       this.currentStreamIndex--;
     }

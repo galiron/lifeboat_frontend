@@ -5,14 +5,10 @@ import { io } from "socket.io-client";
 import { ConnectionState } from "src/app/enums/connectionstate";
 import { WSJwtResponse, WSLockReleaseResponse, WSMessage, WSFeedDogRequest, WSRequestControlTransferToClient, WSControlAssignment, WSVigilanceFeedResponse } from "src/app/interfaces/wsInterfaces";
 
-const CHAT_URL = "ws://localhost:3000";
-
-
 @Injectable({
   providedIn: 'root'
 })
 export class WebsocketConnectorService {
-  //private subject: WebSocketSubject<any> = webSocket(CHAT_URL);
   private socket = io("http://localhost:3000");
   wsJwtResponse$ = new Subject<WSJwtResponse>();
   wsLockReleaseResponse$ = new Subject<WSLockReleaseResponse>();
@@ -20,11 +16,14 @@ export class WebsocketConnectorService {
   wsFeedDogRequest$ = new Subject<WSFeedDogRequest>();
   wsRequestControlTransferToClient$ = new Subject<WSRequestControlTransferToClient>();
   wsControlAssignment$ = new Subject<WSControlAssignment>();
+  wsConnectionEstablished$ = new BehaviorSubject<boolean>(false);
   wsConnectionState$ = new BehaviorSubject<string>(ConnectionState.DISCONNECTED);
   wSVigilanceFeedResponse$ = new Subject<WSVigilanceFeedResponse>();
 
+
   constructor() {
     this.socket.on("connect", () => {
+      this.wsConnectionEstablished$.next(true)
       this.wsConnectionState$.next(ConnectionState.CONNECTED_WITHOUT_CONTROL)
     })
     this.socket.on("disconnect", () => {
@@ -32,11 +31,9 @@ export class WebsocketConnectorService {
     })
     this.socket.on("WSControlAssignment", (dirtyData: WSControlAssignment) => {
       try {
-        console.log("new assignment incoming: ",dirtyData)
         const msg: WSControlAssignment = dirtyData
         this.wsControlAssignment$.next(msg);
         if(msg.success){
-          console.log("control assignment was success")
           this.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
         }
       } catch(err: any){
@@ -85,7 +82,6 @@ export class WebsocketConnectorService {
   }
 
   emit(api: string, data: any): void {
-    //console.log("request api and data: ", api, data)
     this.socket.emit(api, data)
   }
 }
