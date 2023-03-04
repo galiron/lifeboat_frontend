@@ -112,6 +112,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     this.responsiveService.getMobileStatus().subscribe( (isMobile) => {
       this.isMobile = isMobile;
     })
+    this.responsiveService.checkWidth();
   }
 
   changeGridSize(event: any){
