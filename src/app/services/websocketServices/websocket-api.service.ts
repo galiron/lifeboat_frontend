@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { WebSocketSubject } from 'rxjs/webSocket';
-import { ConnectionState } from '../enums/connectionstate';
-import { Instruction, messageIsOfInterface, WSControlTransferResponse, WSJwtMessage, WSJwtResponse, WSLockReleaseResponse, WSRequestControlTransferToBackend, WSSteeringRequest, WSThrottleRequest } from '../interfaces/wsInterfaces';
+import { ConnectionState } from 'src/app/enums/connectionstate';
+import { WSJwtResponse, WSLockReleaseResponse, WSControlTransferResponse, Instruction, WSThrottleRequest, WSSteeringRequest, WSJwtMessage, WSRequestControlTransferToBackend } from 'src/app/interfaces/wsInterfaces';
 import { WebsocketConnectorService } from './websocketConnector.service';
 
 @Injectable({

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { CameraWebsocketService } from '../services/camera-websocket.service';
-import { IdentityService } from '../services/identity.service';
+import { CameraWebsocketService } from '../../services/websocketServices/camera-websocket.service';
+import { IdentityService } from '../../services/dataServices/identity.service';
 
 @Component({
   selector: 'app-landingpage',

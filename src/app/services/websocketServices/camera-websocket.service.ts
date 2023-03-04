@@ -1,10 +1,10 @@
-import { StreamStatus } from './../models/streamStatus';
-import { ConfigService } from './config.service';
+import { StreamStatus } from '../../models/streamStatus';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { CameraData } from '../interfaces/wsInterfaces';
-import { Stream } from '../models/stream';
+import { CameraData } from '../../interfaces/wsInterfaces';
+import { Stream } from '../../models/stream';
+import { ConfigService } from '../dataServices/config.service';
 
 @Injectable({
   providedIn: 'root'

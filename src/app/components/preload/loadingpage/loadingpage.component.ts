@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ConnectionState } from '../enums/connectionstate';
-import { CameraWebsocketService } from '../services/camera-websocket.service';
-import { WebsocketConnectorService } from '../services/websocketConnector.service';
+import { ConnectionState } from 'src/app/enums/connectionstate';
+import { CameraWebsocketService } from 'src/app/services/websocketServices/camera-websocket.service';
+import { WebsocketConnectorService } from 'src/app/services/websocketServices/websocketConnector.service';
 
 @Component({
   selector: 'app-loadingpage',

@@ -1,23 +1,23 @@
-import { AccessControlService } from './../services/access-control.service';
-import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, NgZone, OnInit, QueryList, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
+import {  AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostBinding, HostListener, NgZone, OnInit, QueryList, Renderer2, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { TransferRequestComponent } from '../popups/transfer-request/transfer-request.component';
-import { IdentityService } from '../services/identity.service';
-import { WebsocketConnectorService } from '../services/websocketConnector.service';
-import { ConnectionState } from '../enums/connectionstate';
-import { WebsocketAPIService } from '../services/websocket-api.service';
 import { BehaviorSubject } from 'rxjs';
 import SwiperCore, {   Navigation,
   Pagination,
   Virtual, Keyboard, Swiper } from 'swiper';
 import { ViewChildren } from '@angular/core';
-import { WSControlAssignment, WSVigilanceFeedResponse } from '../interfaces/wsInterfaces';
-import { CameraWebsocketService } from '../services/camera-websocket.service';
 import { Router } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
-import { CameraService } from '../services/camera.service';
-import { ResponsiveService } from '../services/responsive.service';
+import { ConnectionState } from 'src/app/enums/connectionstate';
+import { WSVigilanceFeedResponse, WSControlAssignment } from 'src/app/interfaces/wsInterfaces';
+import { IdentityService } from 'src/app/services/dataServices/identity.service';
+import { AccessControlService } from 'src/app/services/logicServices/access-control.service';
+import { ResponsiveService } from 'src/app/services/logicServices/responsive.service';
+import { CameraRequestService } from 'src/app/services/websocketServices/camera-request.service';
+import { CameraWebsocketService } from 'src/app/services/websocketServices/camera-websocket.service';
+import { WebsocketAPIService } from 'src/app/services/websocketServices/websocket-api.service';
+import { WebsocketConnectorService } from 'src/app/services/websocketServices/websocketConnector.service';
+import { TransferRequestComponent } from '../shared/popups/transfer-request/transfer-request.component';
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
@@ -74,7 +74,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   slides$ = new BehaviorSubject<string[]>(['']);
   isMobile: boolean = true;
   cameraWebSocketConnected: boolean = false;
-  constructor(private deviceService: DeviceDetectorService, private sanitizer: DomSanitizer, private cameraService: CameraService, private responsiveService: ResponsiveService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
+  constructor(private deviceService: DeviceDetectorService, private sanitizer: DomSanitizer, private cameraService: CameraRequestService, private responsiveService: ResponsiveService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
       if (this.processing === false) {

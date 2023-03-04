@@ -1,11 +1,9 @@
-import { WSControlAssignment, WSFeedDogRequest, WSJwtResponse, WSMessage, WSRequestControlTransferToClient, WSVigilanceFeedResponse } from './../interfaces/wsInterfaces';
-import { Socket } from 'ngx-socket-io';
+
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { io } from "socket.io-client";
-import { WSLockReleaseResponse } from '../interfaces/wsInterfaces';
-import { ConnectionState } from '../enums/connectionstate'
+import { ConnectionState } from "src/app/enums/connectionstate";
+import { WSJwtResponse, WSLockReleaseResponse, WSMessage, WSFeedDogRequest, WSRequestControlTransferToClient, WSControlAssignment, WSVigilanceFeedResponse } from "src/app/interfaces/wsInterfaces";
 
 const CHAT_URL = "ws://localhost:3000";
 

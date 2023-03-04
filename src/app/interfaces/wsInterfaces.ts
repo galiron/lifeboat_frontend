@@ -71,16 +71,3 @@ export interface WSRequestControlTransferToClient extends WSMessage{
     identifier: string;
     username: string
 }
-
-/* Careful, this function is dumb and only checks the interfaceName
-   that gets send! Make sure to not use the wrong interfaceName for the
-   belonging data on the backend !!! */
-export function messageIsOfInterface(message: any, interfaceName: string){
-    const parsedMessage = JSON.parse(message)
-    if(parsedMessage){
-        if(parsedMessage.interfaceType == interfaceName){
-            return parsedMessage;
-        }
-    }
-    return undefined;
-}

@@ -1,12 +1,10 @@
-import { WebsocketConnectorService } from './websocketConnector.service';
-
 import { Injectable } from '@angular/core';
-import { messageIsOfInterface, WSFeedDogRequest, WSMessage, WSControlTransfer, WSRequestControlTransferToClient, WSControlAssignment } from '../interfaces/wsInterfaces';
 import { Subject } from 'rxjs';
 import { Queue } from 'queue-typescript';
-import { WebsocketAPIService } from './websocket-api.service';
-import { RandomGeneratorService } from './random-generator.service';
-import { IdentityService } from './identity.service';
+import { WSRequestControlTransferToClient, WSMessage, WSControlAssignment, WSControlTransfer } from 'src/app/interfaces/wsInterfaces';
+import { IdentityService } from '../dataServices/identity.service';
+import { WebsocketAPIService } from '../websocketServices/websocket-api.service';
+import { WebsocketConnectorService } from '../websocketServices/websocketConnector.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +16,7 @@ export class AccessControlService {
   requesterInProgress?: WSRequestControlTransferToClient | undefined;
   
 
-  constructor(private websocketAPIService: WebsocketAPIService, private websocketConnectorService: WebsocketConnectorService, private randomGeneratorService: RandomGeneratorService, private identityService: IdentityService) {
+  constructor(private websocketAPIService: WebsocketAPIService, private websocketConnectorService: WebsocketConnectorService, private identityService: IdentityService) {
     websocketConnectorService.wsMessage$.subscribe((data: WSMessage) => {
       // unused; listener for general ws Messages
     });

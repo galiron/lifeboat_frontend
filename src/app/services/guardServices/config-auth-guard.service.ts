@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { IdentityService } from '../services/identity.service';
+import { ConfigService } from '../dataServices/config.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuardService implements CanActivate{
-  constructor(private identityService: IdentityService, private router: Router) { }
+export class ConfigAuthGuardService {
+  constructor(private configService: ConfigService, private router: Router) { }
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    if (this.identityService.name && this.identityService.password){
+    if (this.configService.config$.getValue()){
       return true;
     } else {
       const tree: UrlTree = this.router.createUrlTree([]);

@@ -1,6 +1,6 @@
-import { AccessControlService } from './access-control.service';
 import { ChangeContext } from '@angular-slider/ngx-slider';
 import { Injectable } from '@angular/core';
+import { AccessControlService } from '../logicServices/access-control.service';
 import { WebsocketAPIService } from './websocket-api.service';
 
 @Injectable({
