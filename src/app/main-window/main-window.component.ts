@@ -164,7 +164,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       this.idleTimer--;
       setTimeout(() => {
         this.setIdleTimer(this.idleTimer);
-      }, 500);
+      }, 1000);
     }
   }
 
