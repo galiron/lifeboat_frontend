@@ -10,7 +10,7 @@ export class CameraRequestService {
 
   constructor(private websocketConnectorService: WebsocketConnectorService, private cameraWebsocketService: CameraWebsocketService) { 
     this.websocketConnectorService.wsControlAssignment$.subscribe((assignment: WSControlAssignment) => {
-      if(assignment.success && assignment.cameraData) {
+      if(assignment.cameraData) {
         this.cameraWebsocketService.requestStreams(assignment.cameraData);
       }
     })
