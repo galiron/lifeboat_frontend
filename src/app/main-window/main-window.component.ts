@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { CameraService } from '../services/camera.service';
+import { ResponsiveService } from '../services/responsive.service';
 
 // install Swiper modules
 SwiperCore.use([Keyboard, Pagination, Navigation,Virtual]);
@@ -53,6 +54,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   @HostBinding('style.grid-template-columns') cols: SafeStyle = '';
   @HostListener('window:resize', ['$event'])
     onResize() {
+      this.checkDeviceSize();
       this.adjustSwiperSlides()
   }
   
@@ -70,9 +72,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   gridRows : number = 0;
   private processing = false;
   slides$ = new BehaviorSubject<string[]>(['']);
+  isMobile: boolean = true;
   cameraWebSocketConnected: boolean = false;
-  constructor(private deviceService: DeviceDetectorService, private sanitizer: DomSanitizer, private cameraService: CameraService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
-
+  constructor(private deviceService: DeviceDetectorService, private sanitizer: DomSanitizer, private cameraService: CameraService, private responsiveService: ResponsiveService, private changeDetectorRef: ChangeDetectorRef, private renderer: Renderer2, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
       if (this.processing === false) {
@@ -107,6 +109,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       console.log("xxx:  ",stream);
       this.streams.push(stream);
     })
+    this.responsiveService.getMobileStatus().subscribe( (isMobile) => {
+      this.isMobile = isMobile;
+    })
   }
 
   changeGridSize(event: any){
@@ -115,31 +120,28 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     }, 5);
   }
 
+  checkDeviceSize() {
+    this.responsiveService.checkWidth()
+  }
+
   adjustSwiperSlides(){
    
       if(this.speedControlContainer && this.steeringControlContainer) {
-        if (this.deviceService.isMobile()) {
-  
+        if (this.isMobile) {
+          this.gridCols = 1;
+          this.gridRows = 4
         } else {
+          console.log("REEEEDDDOOOO")
           this.gridCols = this.gridSizeValue
           this.gridRows = this.gridSizeValue
-          console.log("w")
-          console.log("w", document.body.offsetHeight)
-          console.log("w", document.body.offsetWidth)
-          console.log("w", this.toolbar.nativeElement.offsetHeight)
-          console.log("wsteer", (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight)
-          console.log("wspeed",  (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth)
-          console.log("w")
-          const windowHeight = document.body.offsetHeight;
-          const windowWidth = document.body.offsetWidth;
-          const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
-          const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth; // small width buffer to prevent buggy resizes
-          const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight -32; // -32 ~ 2rem for top margin (if default font size of 16)
-          this.cellWidth = ((formatWidth) / this.gridCols) - (this.gridCols-1) * 16
-          this.cellHeight = ((formatHeight) / this.gridRows) - (this.gridRows-1) * 16
-          console.log("width of cell : ", this.cellWidth)
-          console.log("height of cell : ", this.cellHeight)
         }
+        const windowHeight = document.body.offsetHeight;
+        const windowWidth = document.body.offsetWidth;
+        const mainComponentHeight = windowHeight - this.toolbar.nativeElement.offsetHeight;
+        const formatWidth = windowWidth - (this.speedControlContainer.nativeElement as HTMLElement).offsetWidth;
+        const formatHeight = mainComponentHeight - (this.steeringControlContainer.nativeElement as HTMLElement).offsetHeight -32; // -32 ~ 2rem for top margin (if default font size of 16)
+        this.cellWidth = ((formatWidth) / this.gridCols) - (this.gridCols-1) * 16
+        this.cellHeight = ((formatHeight) / this.gridRows) - (this.gridRows-1) * 16
         this.rows = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridRows +', minmax('+ this.cellHeight +'px, auto))');
         this.cols = this.sanitizer.bypassSecurityTrustStyle('repeat('+ this.gridCols +', minmax('+ this.cellWidth +'px, auto))');
       }

@@ -3,7 +3,7 @@
         <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITH_CONTROL" mat-button style="flex: 1 1 auto;" (click)="releaseControl()">release control</button>
         <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITHOUT_CONTROL" mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
         <button mat-button style="flex: 1 1 auto;" (click)="backToLogin()">back to login</button>
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="fill" *ngIf="!isMobile">
             <mat-label>Grid size</mat-label>
             <mat-select  [(ngModel)]="gridSizeValue" name="food">
                 <mat-option *ngFor="let val of gridSize" [value]="val" (onSelectionChange)="changeGridSize($event)">
@@ -33,7 +33,7 @@
             <app-speed-control *ngIf="this.connectionState === connectionType.CONNECTED_WITH_CONTROL" style="align-self: center; height: 100%; width: 100%;"></app-speed-control>
         </div>
         <div #grid style="display: grid; width: 100%; height: 100%; margin-top: 2rem; justify-items: center; align-items: center; gap: 16px 16px;" [style.grid-template-rows]="rows" [style.grid-template-columns]="cols">
-            <div #swipers *ngFor="let _ of [].constructor(gridSizeValue* gridSizeValue)"
+            <div #swipers *ngFor="let _ of [].constructor(gridSizeValue * gridSizeValue)"
 
                 style="display: flex; flex-flow: column; align-items: center; justify-content: center; height: 100%; width: 100%;"
                 >
