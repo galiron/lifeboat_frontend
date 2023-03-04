@@ -22,8 +22,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { ConfigService } from './services/config.service';
 import {MatSelectModule} from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
+import { LoadingpageComponent } from './loadingpage/loadingpage.component';
+import { LoadingConfigPageComponent } from './loading-config-page/loading-config-page.component';
 
-const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
+//const config: SocketIoConfig = { url: 'ws://localhost:3000', options: {} };
 export const configFactory = (configService: ConfigService) => {
   return () => configService.loadConfig();
 };
@@ -36,13 +38,15 @@ export const configFactory = (configService: ConfigService) => {
     MainWindowComponent,
     TransferRequestComponent,
     LandingpageComponent,
-    StreamComponent
+    StreamComponent,
+    LoadingpageComponent,
+    LoadingConfigPageComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgxSliderModule,
-    SocketIoModule.forRoot(config),
+    SocketIoModule, //.forRoot(config),
     BrowserAnimationsModule,
     MatButtonModule,
     MatSnackBarModule,

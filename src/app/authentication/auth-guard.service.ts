@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { IdentityService } from '../services/identity.service';
 
@@ -7,10 +7,14 @@ import { IdentityService } from '../services/identity.service';
   providedIn: 'root'
 })
 export class AuthGuardService implements CanActivate{
-
-  constructor(private identityService: IdentityService) { }
+  constructor(private identityService: IdentityService, private router: Router) { }
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    return Boolean(this.identityService.name && this.identityService.password)
+    if (this.identityService.name && this.identityService.password){
+      return true;
+    } else {
+      const tree: UrlTree = this.router.createUrlTree([]);
+      return tree
+    }
   }
   
 }
