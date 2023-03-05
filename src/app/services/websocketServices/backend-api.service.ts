@@ -1,31 +1,40 @@
-import { Injectable } from '@angular/core';
-import { ConnectionState } from 'src/app/enums/connectionstate';
-import { WSJwtResponse, WSLockReleaseResponse, WSControlTransferResponse, Instruction, WSThrottleRequest, WSSteeringRequest, WSJwtMessage, WSRequestControlTransferToBackend } from 'src/app/interfaces/wsInterfaces';
-import { WebsocketConnectorService } from './websocketConnector.service';
+import {Injectable} from '@angular/core';
+import {ConnectionState} from 'src/app/enums/connectionstate';
+import {
+  WSJwtResponse,
+  WSLockReleaseResponse,
+  WSControlTransferResponse,
+  Instruction,
+  WSThrottleRequest,
+  WSSteeringRequest,
+  WSJwtMessage,
+  WSRequestControlTransferToBackend
+} from 'src/app/interfaces/wsInterfaces';
+import {BackendConnectorService} from './backend-connector.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WebsocketAPIService {
+export class BackendAPIService {
   jwt = ''; // api requests need jwt
 
-  constructor(private websocketConnectorService: WebsocketConnectorService) {
+  constructor(private websocketConnectorService: BackendConnectorService) {
     this.websocketConnectorService.wsJwtResponse$.subscribe((data: WSJwtResponse) => {
-        if(this.jwt === "" && data.jwt != "") {
-          this.jwt = data.jwt;
-          this.websocketConnectorService.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
-        }
+      if (this.jwt === "" && data.jwt != "") {
+        this.jwt = data.jwt;
+        this.websocketConnectorService.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
+      }
     });
     this.websocketConnectorService.wsLockReleaseResponse$.subscribe((data: WSLockReleaseResponse) => {
-      if(data.success) {
+      if (data.success) {
         this.jwt = ''
       }
     });
-   }
+  }
 
-  transferControl(identifier: string | undefined) : void{
+  transferControl(identifier: string | undefined): void {
     let success = false;
-    if(identifier) {
+    if (identifier) {
       success = true;
     } else {
       identifier = ""
@@ -39,9 +48,9 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit("transferControl", data);
   }
 
-  declineControl(identifier: string | undefined) : void{
+  declineControl(identifier: string | undefined): void {
     let success = false;
-    if(identifier) {
+    if (identifier) {
       success = true;
     } else {
       identifier = ""
@@ -55,8 +64,8 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit("transferControlDeclined", data);
   }
 
-  sendThrottle(value: number) : void {
-    const instruction: Instruction = { value }
+  sendThrottle(value: number): void {
+    const instruction: Instruction = {value}
     const data: WSThrottleRequest = {
       jwt: this.jwt,
       instruction,
@@ -65,8 +74,8 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('throttle', data);
   }
 
-  sendSteering(value: number) : void {
-    const instruction : Instruction = { value }
+  sendSteering(value: number): void {
+    const instruction: Instruction = {value}
     const data: WSSteeringRequest = {
       jwt: this.jwt,
       instruction,
@@ -75,16 +84,16 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('steer', data);
   }
 
-  claimLock(username: string, password: string) : void{
-    const data = { 
-      "username": username, 
+  claimLock(username: string, password: string): void {
+    const data = {
+      "username": username,
       "password": password,
       interfaceType: "WSLockRequest"
-    } 
+    }
     this.websocketConnectorService.emit('lock', data);
   }
 
-  releaseLock() : void{
+  releaseLock(): void {
     const data: WSJwtMessage = {
       jwt: this.jwt,
       interfaceType: "JWTResponse"
@@ -92,8 +101,8 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('unlock', data);
   }
 
-  requestControlTransfer(username: string, password: string) : void{
-    
+  requestControlTransfer(username: string, password: string): void {
+
     const data: WSRequestControlTransferToBackend = {
       username,
       interfaceType: "WSRequestControlTransfer",
@@ -102,14 +111,14 @@ export class WebsocketAPIService {
     this.websocketConnectorService.emit('requestControlTransfer', data);
   }
 
-  feedWatchdog() : void {
+  feedWatchdog(): void {
     const data = {
       jwt: this.jwt
     }
     this.websocketConnectorService.emit('feedWatchdog', data);
   }
 
-  feedVigilanceControl() : void {
+  feedVigilanceControl(): void {
     const data = {
       jwt: this.jwt
     }

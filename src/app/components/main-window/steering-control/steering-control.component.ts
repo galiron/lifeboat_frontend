@@ -1,6 +1,6 @@
-import { ChangeContext, LabelType, Options } from '@angular-slider/ngx-slider';
-import { Component, OnInit } from '@angular/core';
-import { ControlService } from 'src/app/services/websocketServices/control.service';
+import {ChangeContext, LabelType, Options} from '@angular-slider/ngx-slider';
+import {Component, OnInit} from '@angular/core';
+import {ControlService} from 'src/app/services/websocketServices/control.service';
 
 @Component({
   selector: 'app-steering-control',
@@ -20,8 +20,9 @@ export class SteeringControlComponent implements OnInit {
       }
     }
   };
-  
-  constructor(private controlService: ControlService) { }
+
+  constructor(private controlService: ControlService) {
+  }
 
   ngOnInit(): void {
   }

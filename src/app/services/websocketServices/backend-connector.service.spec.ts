@@ -1,13 +1,13 @@
 import { fakeAsync, TestBed } from '@angular/core/testing';
 
-import { WebsocketConnectorService } from './websocketConnector.service';
+import { BackendConnectorService } from './backend-connector.service';
 
-describe('WebsocketConnectorService', () => {
-  let service: WebsocketConnectorService;
+describe('BackendConnectorService', () => {
+  let service: BackendConnectorService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(WebsocketConnectorService);
+    service = TestBed.inject(BackendConnectorService);
   });
 
   it('should be created', () => {

@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {ReplaySubject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +7,9 @@ import { ReplaySubject } from 'rxjs';
 export class WebsocketMockService {
 
   subject = new ReplaySubject(1);
-  constructor() {}
+
+  constructor() {
+  }
 
   emit(data: any): void {
     this.subject.next(data);

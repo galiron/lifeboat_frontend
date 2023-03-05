@@ -1,9 +1,9 @@
-import { StreamStatus } from '../../models/streamStatus';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { CameraData } from '../../interfaces/wsInterfaces';
-import { Stream } from '../../models/stream';
-import { ConfigService } from '../dataServices/config.service';
+import {StreamStatus} from '../../models/streamStatus';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, Subject} from 'rxjs';
+import {CameraData} from '../../interfaces/wsInterfaces';
+import {Stream} from '../../models/stream';
+import {ConfigService} from '../dataServices/config.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,16 +12,16 @@ export class CameraWebsocketService {
 
   videos$ = new Subject<any>();
   ws: WebSocket //= new WebSocket(this.wsUrl, "rtc-api-protocol");
-  callbackList : any = new Object;
-  private streams: Array<Stream> = new Array<Stream>
+  callbackList: any = new Object;
+  private streams: Array<Stream> = new Array<Stream>;
   isReady$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  
+
 
   requestStreams(cameraData: CameraData[]) {
     for (let camera of cameraData) {
       const tempuuid = camera.uuid + Date.now()
-      if(!Stream.isContainedInArray(this.streams, camera.uuid)) {
-        const streamstatus : StreamStatus = new StreamStatus(false, true);
+      if (!Stream.isContainedInArray(this.streams, camera.uuid)) {
+        const streamstatus: StreamStatus = new StreamStatus(false, true);
         const stream = new Stream(camera.uuid, false, true, streamstatus);
         this.streams.push(stream);
       }
@@ -48,10 +48,10 @@ export class CameraWebsocketService {
     }
   }
 
-  constructor(private configService: ConfigService) { 
-    var iceCandidates : any = [];
+  constructor(private configService: ConfigService) {
+    var iceCandidates: any = [];
     this.ws = new WebSocket(configService.config.wsUrl, "rtc-api-protocol");
-  
+
     this.ws.onopen = () => {
       console.log("onopen!");
       this.isReady$.next(true)
@@ -62,7 +62,7 @@ export class CameraWebsocketService {
         var msg = JSON.parse(message.data);
         console.log(msg);
         if (msg.streamReceiveResponse && msg.streamReceiveResponse.success) {
-          if(this.callbackList[msg.streamReceiveResponse.uuid]) {
+          if (this.callbackList[msg.streamReceiveResponse.uuid]) {
             this.callbackList[msg.streamReceiveResponse.uuid](msg.streamReceiveResponse);
           }
 
@@ -76,12 +76,12 @@ export class CameraWebsocketService {
           var pc: any = new RTCPeerConnection(undefined);
           pc.onaddstream = (event: any) => {
             if (event.stream) {
-                this.videos$.next(event.stream);
+              this.videos$.next(event.stream);
             }
           };
           var sendingSocket = this.ws;
           pc.setRemoteDescription(
-            new RTCSessionDescription({ type: "offer", sdp: msg.sdpRequest.sdp}),
+            new RTCSessionDescription({type: "offer", sdp: msg.sdpRequest.sdp}),
             () => { // setRemoteSuccess
               pc.createAnswer(
                 (description: any) => { // createAnswerSuccess
@@ -116,13 +116,13 @@ export class CameraWebsocketService {
         }
       } catch (error) {
         console.log(error);
-        console.log('"'+message.data+'"');
+        console.log('"' + message.data + '"');
       }
     }
     setTimeout(() => {
       this.start()
     }, 1000);
-    
+
   }
 
 

@@ -1,14 +1,21 @@
-
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Subject } from "rxjs";
-import { io } from "socket.io-client";
-import { ConnectionState } from "src/app/enums/connectionstate";
-import { WSJwtResponse, WSLockReleaseResponse, WSMessage, WSFeedDogRequest, WSRequestControlTransferToClient, WSControlAssignment, WSVigilanceFeedResponse } from "src/app/interfaces/wsInterfaces";
+import {Injectable} from "@angular/core";
+import {BehaviorSubject, Subject} from "rxjs";
+import {io} from "socket.io-client";
+import {ConnectionState} from "src/app/enums/connectionstate";
+import {
+  WSJwtResponse,
+  WSLockReleaseResponse,
+  WSMessage,
+  WSFeedDogRequest,
+  WSRequestControlTransferToClient,
+  WSControlAssignment,
+  WSVigilanceFeedResponse
+} from "src/app/interfaces/wsInterfaces";
 
 @Injectable({
   providedIn: 'root'
 })
-export class WebsocketConnectorService {
+export class BackendConnectorService {
   private socket = io("http://localhost:3000");
   wsJwtResponse$ = new Subject<WSJwtResponse>();
   wsLockReleaseResponse$ = new Subject<WSLockReleaseResponse>();
@@ -33,10 +40,10 @@ export class WebsocketConnectorService {
       try {
         const msg: WSControlAssignment = dirtyData
         this.wsControlAssignment$.next(msg);
-        if(msg.success){
+        if (msg.success) {
           this.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL)
         }
-      } catch(err: any){
+      } catch (err: any) {
         console.log(err)
       }
     });
@@ -44,38 +51,38 @@ export class WebsocketConnectorService {
       try {
         let wSLockReleaseResponse: WSLockReleaseResponse = dirtyData;
         this.wsLockReleaseResponse$.next(wSLockReleaseResponse);
-        if(wSLockReleaseResponse.success) {
+        if (wSLockReleaseResponse.success) {
           this.wsConnectionState$.next(ConnectionState.CONNECTED_WITHOUT_CONTROL)
         }
-      } catch(err: any){
+      } catch (err: any) {
         console.log(err)
       }
     });
     this.socket.on("WSMessage", (dirtyData: WSMessage) => {
       try {
         this.wsMessage$.next(dirtyData);
-      } catch(err: any){
+      } catch (err: any) {
         console.log(err)
       }
     });
     this.socket.on("WSFeedDogRequest", (dirtyData: WSFeedDogRequest) => {
       try {
         this.wsFeedDogRequest$.next(dirtyData);
-      } catch(err: any){
+      } catch (err: any) {
         console.log(err)
       }
     });
     this.socket.on("WSRequestControlTransferToClient", (dirtyData: WSRequestControlTransferToClient) => {
       try {
         this.wsRequestControlTransferToClient$.next(dirtyData);
-      } catch(err: any){
+      } catch (err: any) {
         console.log(err)
       }
     });
     this.socket.on("WSVigilanceFeedResponse", (dirtyData: WSVigilanceFeedResponse) => {
       try {
         this.wSVigilanceFeedResponse$.next(dirtyData);
-      } catch(err: any){
+      } catch (err: any) {
         console.log(err)
       }
     });

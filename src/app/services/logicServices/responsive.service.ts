@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {Subject, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -43,25 +43,25 @@ export class ResponsiveService {
   public checkWidth() {
     const width = window.innerWidth;
     if (width <= 414) {
-    this.screenWidth = 'xs';
-    this.onMobileChange(true);
-    this.onSmallScreenChange(true);
-    this.onDesktopChange(false);
+      this.screenWidth = 'xs';
+      this.onMobileChange(true);
+      this.onSmallScreenChange(true);
+      this.onDesktopChange(false);
     } else if (width <= 768) {
-    this.screenWidth = 'sm';
-    this.onMobileChange(true);
-    this.onSmallScreenChange(false);
-    this.onDesktopChange(false);
+      this.screenWidth = 'sm';
+      this.onMobileChange(true);
+      this.onSmallScreenChange(false);
+      this.onDesktopChange(false);
     } else if (width > 768 && width <= 992) {
-    this.screenWidth = 'md';
-    this.onMobileChange(false);
-    this.onSmallScreenChange(false);
-    this.onDesktopChange(false);
+      this.screenWidth = 'md';
+      this.onMobileChange(false);
+      this.onSmallScreenChange(false);
+      this.onDesktopChange(false);
     } else {
-    this.screenWidth = 'lg';
-    this.onMobileChange(false);
-    this.onSmallScreenChange(false);
-    this.onDesktopChange(true);
+      this.screenWidth = 'lg';
+      this.onMobileChange(false);
+      this.onSmallScreenChange(false);
+      this.onDesktopChange(true);
     }
   }
 }

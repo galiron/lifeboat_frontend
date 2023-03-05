@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { ConfigService } from '../../../services/dataServices/config.service';
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
+import {ConfigService} from '../../../services/dataServices/config.service';
 
 @Component({
   selector: 'app-loading-config-page',
@@ -10,7 +10,7 @@ import { ConfigService } from '../../../services/dataServices/config.service';
 export class LoadingConfigPageComponent {
 
   constructor(private configService: ConfigService, private router: Router) {
-    configService.config$.subscribe( (configLoaded) => {
+    configService.config$.subscribe((configLoaded) => {
       if (configLoaded) {
         this.router.navigateByUrl('/loadingStreams');
       }
