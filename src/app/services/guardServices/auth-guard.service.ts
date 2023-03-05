@@ -15,7 +15,7 @@ export class AuthGuardService implements CanActivate {
       return true;
     } else {
       const tree: UrlTree = this.router.createUrlTree([]);
-      return tree
+      return tree;
     }
   }
 

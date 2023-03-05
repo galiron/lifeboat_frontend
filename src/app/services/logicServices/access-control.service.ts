@@ -2,10 +2,10 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 import {Queue} from 'queue-typescript';
 import {
-  WSRequestControlTransferToClient,
-  WSMessage,
   WSControlAssignment,
-  WSControlTransfer
+  WSControlTransfer,
+  WSMessage,
+  WSRequestControlTransferToClient
 } from 'src/app/interfaces/wsInterfaces';
 import {IdentityService} from '../dataServices/identity.service';
 import {BackendAPIService} from '../websocketServices/backend-api.service';
@@ -34,7 +34,7 @@ export class AccessControlService {
     });
     websocketConnectorService.wsControlAssignment$.subscribe((assignment: WSControlAssignment) => {
       if (assignment.jwt != "") {
-        this.websocketAPIService.jwt = assignment.jwt
+        this.websocketAPIService.jwt = assignment.jwt;
       }
     });
   }
@@ -42,14 +42,14 @@ export class AccessControlService {
   popNextRequester(): boolean {
     if (this.controlRequester.length > 0) {
       this.requesterInProgress = this.controlRequester.dequeue();
-      return true
+      return true;
     } else {
       return false;
     }
   }
 
   declineControl(): void {
-    let requester = this.requesterInProgress
+    let requester = this.requesterInProgress;
     if (requester) {
       this.websocketAPIService.declineControl(requester.identifier);
     } else {
@@ -72,7 +72,7 @@ export class AccessControlService {
 
   requestControlTransfer(name: string): void {
     if (this.identityService.password) {
-      this.websocketAPIService.requestControlTransfer(name, this.identityService.password)
+      this.websocketAPIService.requestControlTransfer(name, this.identityService.password);
     } else {
       console.log("can't request control without password");
     }

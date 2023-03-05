@@ -21,18 +21,18 @@ export class LoadingpageComponent {
         this.backendServiceConnectionEstablished = true;
         this.checkIfPageIsLoaded();
       }
-    })
+    });
     this.cameraWebsocketService.isReady$.subscribe((ready) => {
       if (ready) {
         this.cameraServiceConnectionEstablished = true;
         this.checkIfPageIsLoaded();
       }
-    })
+    });
     this.websocketConnectorService.wsConnectionEstablished$.subscribe((alreadyEstablished) => {
       this.alreadyConnected = alreadyEstablished;
       this.checkIfPageIsLoaded();
-    })
-    this.checkIfPageIsLoaded()
+    });
+    this.checkIfPageIsLoaded();
   }
 
   checkIfPageIsLoaded(): void {

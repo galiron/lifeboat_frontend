@@ -14,6 +14,6 @@ export class LoadingConfigPageComponent {
       if (configLoaded) {
         this.router.navigateByUrl('/loadingStreams');
       }
-    })
+    });
   }
 }

@@ -51,15 +51,15 @@ export interface WSControlTransferResponse extends WSJwtResponse {
 }
 
 export interface WSThrottleRequest extends WSJwtMessage {
-  instruction: Instruction
+  instruction: Instruction;
 }
 
 export interface WSSteeringRequest extends WSJwtMessage {
-  instruction: Instruction
+  instruction: Instruction;
 }
 
 export interface Instruction {
-  value: number
+  value: number;
 }
 
 export interface WSRequestControlTransferToBackend extends WSMessage {
@@ -69,5 +69,5 @@ export interface WSRequestControlTransferToBackend extends WSMessage {
 
 export interface WSRequestControlTransferToClient extends WSMessage {
   identifier: string;
-  username: string
+  username: string;
 }

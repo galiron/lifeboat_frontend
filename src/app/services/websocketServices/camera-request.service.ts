@@ -13,7 +13,7 @@ export class CameraRequestService {
       if (assignment.cameraData) {
         this.cameraWebsocketService.requestStreams(assignment.cameraData);
       }
-    })
+    });
   }
 
 }

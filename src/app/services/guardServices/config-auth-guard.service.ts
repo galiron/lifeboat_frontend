@@ -15,7 +15,7 @@ export class ConfigAuthGuardService {
       return true;
     } else {
       const tree: UrlTree = this.router.createUrlTree([]);
-      return tree
+      return tree;
     }
   }
 

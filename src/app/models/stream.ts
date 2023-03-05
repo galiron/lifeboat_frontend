@@ -16,7 +16,7 @@ export class Stream {
     this.audio = audio;
     this.video = video;
     this.pc = pc;
-    this.uuid = uuid
+    this.uuid = uuid;
     if (status) {
       this.status = status;
     } else {
@@ -27,8 +27,8 @@ export class Stream {
   static isContainedInArray(streamArray: Array<Stream>, uuid: string): boolean {
     for (let entry of streamArray) {
       if (entry.uuid == uuid)
-        return true
+        return true;
     }
-    return false
+    return false;
   }
 }
