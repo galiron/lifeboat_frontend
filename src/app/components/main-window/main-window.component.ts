@@ -62,6 +62,7 @@ export class MainWindowComponent implements AfterViewInit {
   private processing = false;
   isMobile: boolean = true;
   cameraWebSocketConnected: boolean = false;
+  loggedIn: boolean = false;
   constructor( private sanitizer: DomSanitizer, private cameraService: CameraRequestService, private responsiveService: ResponsiveService, private changeDetectorRef: ChangeDetectorRef, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: WebsocketConnectorService, private websocketAPIService: WebsocketAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
     this.accessControlService.claimControl();
     this.accessControlService.controlRequest$.subscribe( (data) => {
@@ -89,6 +90,7 @@ export class MainWindowComponent implements AfterViewInit {
       if(assignment.success) {
         if(this.idleTimer === 0){
           this.setIdleTimer(30);
+          this.loggedIn = true;
         }
       }
       

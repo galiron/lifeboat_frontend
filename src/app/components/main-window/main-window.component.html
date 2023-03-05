@@ -1,7 +1,7 @@
 <div>
     <mat-toolbar #toolbar style="display: default;">
         <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITH_CONTROL" mat-button style="flex: 1 1 auto;" (click)="releaseControl()">release control</button>
-        <button *ngIf="this.connectionState === this.connectionType.CONNECTED_WITHOUT_CONTROL" mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
+        <button *ngIf="(this.connectionState === this.connectionType.CONNECTED_WITHOUT_CONTROL) && loggedIn" mat-button style="flex: 1 1 auto;" (click)="requestControl()">request control</button>
         <button mat-button style="flex: 1 1 auto;" (click)="backToLogin()">back to login</button>
         <mat-form-field appearance="fill" *ngIf="!isMobile">
             <mat-label>Grid size</mat-label>
