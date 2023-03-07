@@ -26,9 +26,6 @@ export interface WSJwtMessage extends WSMessage {
 export interface WSFeedDogRequest extends WSMessage {
 }
 
-export interface WSConnectionTerminated extends WSMessage {
-}
-
 export interface WSLockReleaseResponse extends WSMessageResponse {
 }
 
