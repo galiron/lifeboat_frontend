@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
@@ -55,6 +56,7 @@ export class MainWindowComponent implements AfterViewInit {
   isMobile: boolean = true;
   cameraWebSocketConnected: boolean = false;
   loggedIn: boolean = false;
+  isLandscape: boolean = false;
   private processing = false;
 
   constructor(private sanitizer: DomSanitizer, private cameraService: CameraRequestService, private responsiveService: ResponsiveService, private changeDetectorRef: ChangeDetectorRef, private accessControlService: AccessControlService, public snackBar: MatSnackBar, private identityService: IdentityService, private websocketConnectorService: BackendConnectorService, private websocketAPIService: BackendAPIService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {
@@ -92,10 +94,14 @@ export class MainWindowComponent implements AfterViewInit {
     this.cameraWebsocketService.videos$.subscribe((stream: MediaStream) => {
       this.streams.push(stream);
     });
-    this.responsiveService.getMobileStatus().subscribe((isMobile) => {
-      this.isMobile = isMobile;
-    });
-    this.responsiveService.checkWidth();
+    this.responsiveService.observeMediaQuery("(max-width: 768px)").subscribe( (mediaQueryEvent: MediaQueryListEvent) => {
+      this.isMobile = mediaQueryEvent.matches;
+      this.adjustSwiperSlides()
+    })
+    this.responsiveService.observeMediaQuery("(orientation: landscape)").subscribe( (mediaQueryEvent: MediaQueryListEvent) => {
+      this.isLandscape = mediaQueryEvent.matches;
+      this.adjustSwiperSlides()
+    })
   }
 
   @HostListener('document:mousemove', ['$event'])
@@ -108,10 +114,12 @@ export class MainWindowComponent implements AfterViewInit {
       this.prevDate = date;
     }
   }
-
   @HostListener('window:resize', ['$event'])
   onResize() {
-    this.checkDeviceSize();
+    this.adjustSwiperSlides();
+  }
+  @HostListener('window:orientationchange', ['$event'])
+  onOrientationChange() {
     this.adjustSwiperSlides();
   }
 
@@ -121,16 +129,16 @@ export class MainWindowComponent implements AfterViewInit {
     }, 5);
   }
 
-  checkDeviceSize() {
-    this.responsiveService.checkWidth();
-  }
-
   adjustSwiperSlides() {
 
     if (this.speedControlContainer && this.steeringControlContainer) {
       if (this.isMobile) {
         this.gridCols = 1;
-        this.gridRows = 4;
+        if(this.isLandscape){
+          this.gridRows = 1;
+        } else {
+          this.gridRows = 4;
+        }
       } else {
         this.gridCols = this.gridSizeValue;
         this.gridRows = this.gridSizeValue;
@@ -144,8 +152,8 @@ export class MainWindowComponent implements AfterViewInit {
       this.cellHeight = ((formatHeight) / this.gridRows) - (this.gridRows - 1) * 16;
       this.rows = this.sanitizer.bypassSecurityTrustStyle('repeat(' + this.gridRows + ', minmax(' + this.cellHeight + 'px, auto))');
       this.cols = this.sanitizer.bypassSecurityTrustStyle('repeat(' + this.gridCols + ', minmax(' + this.cellWidth + 'px, auto))');
+      this.changeDetectorRef.detectChanges();
     }
-    this.changeDetectorRef.detectChanges();
   }
 
 

@@ -40,7 +40,7 @@
     <div #grid
          style="display: grid; width: 100%; height: 100%; margin-top: 2rem; justify-items: center; align-items: center; gap: 16px 16px;"
          [style.grid-template-rows]="rows" [style.grid-template-columns]="cols">
-      <div *ngFor="let _ of [].constructor(gridSizeValue * gridSizeValue)"
+      <div *ngFor="let _ of [].constructor(gridCols * gridRows)"
 
            style="display: flex; flex-flow: column; align-items: center; justify-content: center; height: 100%; width: 100%;"
       >
