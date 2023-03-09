@@ -3,11 +3,11 @@ import {Router} from '@angular/router';
 import {ConfigService} from '../../../services/dataServices/config.service';
 
 @Component({
-  selector: 'app-loading-config-page',
-  templateUrl: './loading-config-page.component.html',
-  styleUrls: ['./loading-config-page.component.scss']
+  selector: 'app-config-loading',
+  templateUrl: './config-load.component.html',
+  styleUrls: ['./config-load.component.scss']
 })
-export class LoadingConfigPageComponent {
+export class ConfigLoadComponent {
 
   constructor(private configService: ConfigService, private router: Router) {
     configService.config$.subscribe((configLoaded) => {

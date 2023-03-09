@@ -10,7 +10,7 @@ import {
   WSMessage,
   WSRequestControlTransferToClient,
   WSVigilanceFeedResponse
-} from "src/app/interfaces/wsInterfaces";
+} from "src/app/interfaces/Interfaces";
 
 @Injectable({
   providedIn: 'root'

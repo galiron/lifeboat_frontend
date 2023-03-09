@@ -1,7 +1,7 @@
 import {StreamStatus} from '../../models/streamStatus';
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Subject} from 'rxjs';
-import {CameraData} from '../../interfaces/wsInterfaces';
+import {CameraData} from '../../interfaces/Interfaces';
 import {Stream} from '../../models/stream';
 import {ConfigService} from '../dataServices/config.service';
 

@@ -16,7 +16,7 @@ import {SwiperModule} from 'swiper/angular';
 import {HttpClientModule} from '@angular/common/http';
 import {MatSelectModule} from '@angular/material/select';
 import {FormsModule} from '@angular/forms';
-import {LoadingConfigPageComponent} from './components/preload/loading-config-page/loading-config-page.component';
+import {ConfigLoadComponent} from './components/preload/config-loading/config-load.component';
 import {ConfigService} from './services/dataServices/config.service';
 import {LoadingpageComponent} from './components/preload/loadingpage/loadingpage.component';
 import {NgxSliderModule} from '@angular-slider/ngx-slider';
@@ -40,7 +40,7 @@ export const configFactory = (configService: ConfigService) => {
     LandingpageComponent,
     StreamComponent,
     LoadingpageComponent,
-    LoadingConfigPageComponent
+    ConfigLoadComponent
   ],
   imports: [
     BrowserModule,

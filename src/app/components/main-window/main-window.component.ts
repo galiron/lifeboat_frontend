@@ -1,5 +1,4 @@
 import {
-  AfterViewChecked,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
@@ -13,7 +12,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import {Router} from '@angular/router';
 import {DomSanitizer, SafeStyle} from '@angular/platform-browser';
 import {ConnectionState} from 'src/app/enums/connectionstate';
-import {WSControlAssignment, WSVigilanceFeedResponse} from 'src/app/interfaces/wsInterfaces';
+import {WSControlAssignment, WSVigilanceFeedResponse} from 'src/app/interfaces/Interfaces';
 import {IdentityService} from 'src/app/services/dataServices/identity.service';
 import {AccessControlService} from 'src/app/services/logicServices/access-control.service';
 import {ResponsiveService} from 'src/app/services/logicServices/responsive.service';
@@ -86,22 +85,24 @@ export class MainWindowComponent implements AfterViewInit {
       if (assignment.success) {
         if (this.idleTimer === 0) {
           this.setIdleTimer(30);
-          this.loggedIn = true;
         }
+      }
+      if (assignment.isAuthorized) {
+        this.loggedIn = true;
       }
 
     });
     this.cameraWebsocketService.videos$.subscribe((stream: MediaStream) => {
       this.streams.push(stream);
     });
-    this.responsiveService.observeMediaQuery("(max-width: 768px)").subscribe( (mediaQueryEvent: MediaQueryListEvent) => {
+    this.responsiveService.observeMediaQuery("(max-width: 768px)").subscribe((mediaQueryEvent: MediaQueryListEvent) => {
       this.isMobile = mediaQueryEvent.matches;
-      this.adjustSwiperSlides()
-    })
-    this.responsiveService.observeMediaQuery("(orientation: landscape)").subscribe( (mediaQueryEvent: MediaQueryListEvent) => {
+      this.adjustSwiperSlides();
+    });
+    this.responsiveService.observeMediaQuery("(orientation: landscape)").subscribe((mediaQueryEvent: MediaQueryListEvent) => {
       this.isLandscape = mediaQueryEvent.matches;
-      this.adjustSwiperSlides()
-    })
+      this.adjustSwiperSlides();
+    });
   }
 
   @HostListener('document:mousemove', ['$event'])
@@ -114,10 +115,12 @@ export class MainWindowComponent implements AfterViewInit {
       this.prevDate = date;
     }
   }
+
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.adjustSwiperSlides();
   }
+
   @HostListener('window:orientationchange', ['$event'])
   onOrientationChange() {
     this.adjustSwiperSlides();
@@ -130,11 +133,10 @@ export class MainWindowComponent implements AfterViewInit {
   }
 
   adjustSwiperSlides() {
-
     if (this.speedControlContainer && this.steeringControlContainer) {
       if (this.isMobile) {
         this.gridCols = 1;
-        if(this.isLandscape){
+        if (this.isLandscape) {
           this.gridRows = 1;
         } else {
           this.gridRows = 4;

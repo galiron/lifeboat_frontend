@@ -1,7 +1,7 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_SNACK_BAR_DATA} from '@angular/material/snack-bar';
 import {Queue} from 'queue-typescript';
-import {WSControlTransfer} from 'src/app/interfaces/wsInterfaces';
+import {WSControlTransfer} from 'src/app/interfaces/Interfaces';
 import {AccessControlService} from 'src/app/services/logicServices/access-control.service';
 
 @Component({

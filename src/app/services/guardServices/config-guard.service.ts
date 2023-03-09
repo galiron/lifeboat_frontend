@@ -6,7 +6,7 @@ import {ConfigService} from '../dataServices/config.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ConfigAuthGuardService {
+export class ConfigGuardService {
   constructor(private configService: ConfigService, private router: Router) {
   }
 

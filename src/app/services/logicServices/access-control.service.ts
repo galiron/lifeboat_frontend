@@ -6,7 +6,7 @@ import {
   WSControlTransfer,
   WSMessage,
   WSRequestControlTransferToClient
-} from 'src/app/interfaces/wsInterfaces';
+} from 'src/app/interfaces/Interfaces';
 import {IdentityService} from '../dataServices/identity.service';
 import {BackendAPIService} from '../websocketServices/backend-api.service';
 import {BackendConnectorService} from '../websocketServices/backend-connector.service';

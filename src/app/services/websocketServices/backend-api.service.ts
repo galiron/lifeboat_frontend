@@ -9,7 +9,7 @@ import {
   WSRequestControlTransferToBackend,
   WSSteeringRequest,
   WSThrottleRequest
-} from 'src/app/interfaces/wsInterfaces';
+} from 'src/app/interfaces/Interfaces';
 import {BackendConnectorService} from './backend-connector.service';
 
 @Injectable({
