@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostBinding,
   HostListener,
   ViewChild,
   ViewEncapsulation
@@ -38,8 +37,8 @@ export class MainWindowComponent implements AfterViewInit {
   @ViewChild('speedControlContainer', {read: ElementRef, static: false}) speedControlContainer!: ElementRef;
   @ViewChild('grid', {read: ElementRef, static: false}) grid!: ElementRef;
   @ViewChild('mainWindow') mainWindow!: ElementRef;
-  @HostBinding('style.grid-template-rows') rows: SafeStyle = '';
-  @HostBinding('style.grid-template-columns') cols: SafeStyle = '';
+  rows: SafeStyle = '';
+  cols: SafeStyle = '';
   gridSize: number[] = [1, 2, 3];
   gridSizeValue: number = 2;
   streams: Array<MediaStream> = [];

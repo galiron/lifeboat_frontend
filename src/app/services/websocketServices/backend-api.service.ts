@@ -18,14 +18,14 @@ import {BackendConnectorService} from './backend-connector.service';
 export class BackendAPIService {
   jwt = ''; // api requests need jwt
 
-  constructor(private websocketConnectorService: BackendConnectorService) {
-    this.websocketConnectorService.wsJwtResponse$.subscribe((data: WSJwtResponse) => {
+  constructor(private backendConnectorService: BackendConnectorService) {
+    this.backendConnectorService.wsJwtResponse$.subscribe((data: WSJwtResponse) => {
       if (this.jwt === "" && data.jwt != "") {
         this.jwt = data.jwt;
-        this.websocketConnectorService.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL);
+        this.backendConnectorService.wsConnectionState$.next(ConnectionState.CONNECTED_WITH_CONTROL);
       }
     });
-    this.websocketConnectorService.wsLockReleaseResponse$.subscribe((data: WSLockReleaseResponse) => {
+    this.backendConnectorService.wsLockReleaseResponse$.subscribe((data: WSLockReleaseResponse) => {
       if (data.success) {
         this.jwt = '';
       }
@@ -45,7 +45,7 @@ export class BackendAPIService {
       identifier,
       interfaceType: "WSControlTransferResponse"
     };
-    this.websocketConnectorService.emit("transferControl", data);
+    this.backendConnectorService.emit("transferControl", data);
   }
 
   declineControl(identifier: string | undefined): void {
@@ -61,7 +61,7 @@ export class BackendAPIService {
       identifier,
       interfaceType: "WSControlTransferResponse"
     };
-    this.websocketConnectorService.emit("transferControlDeclined", data);
+    this.backendConnectorService.emit("transferControlDeclined", data);
   }
 
   sendThrottle(value: number): void {
@@ -71,7 +71,7 @@ export class BackendAPIService {
       instruction,
       interfaceType: "WSThrottleRequest"
     };
-    this.websocketConnectorService.emit('throttle', data);
+    this.backendConnectorService.emit('throttle', data);
   }
 
   sendSteering(value: number): void {
@@ -81,7 +81,7 @@ export class BackendAPIService {
       instruction,
       interfaceType: "WSSteeringRequest"
     };
-    this.websocketConnectorService.emit('steer', data);
+    this.backendConnectorService.emit('steer', data);
   }
 
   claimLock(username: string, password: string): void {
@@ -90,7 +90,7 @@ export class BackendAPIService {
       "password": password,
       interfaceType: "WSLockRequest"
     };
-    this.websocketConnectorService.emit('lock', data);
+    this.backendConnectorService.emit('lock', data);
   }
 
   releaseLock(): void {
@@ -98,7 +98,7 @@ export class BackendAPIService {
       jwt: this.jwt,
       interfaceType: "JWTResponse"
     };
-    this.websocketConnectorService.emit('unlock', data);
+    this.backendConnectorService.emit('unlock', data);
   }
 
   requestControlTransfer(username: string, password: string): void {
@@ -108,20 +108,20 @@ export class BackendAPIService {
       interfaceType: "WSRequestControlTransfer",
       password
     };
-    this.websocketConnectorService.emit('requestControlTransfer', data);
+    this.backendConnectorService.emit('requestControlTransfer', data);
   }
 
   feedWatchdog(): void {
     const data = {
       jwt: this.jwt
     };
-    this.websocketConnectorService.emit('feedWatchdog', data);
+    this.backendConnectorService.emit('feedWatchdog', data);
   }
 
   feedVigilanceControl(): void {
     const data = {
       jwt: this.jwt
     };
-    this.websocketConnectorService.emit('feedVigilanceControl', data);
+    this.backendConnectorService.emit('feedVigilanceControl', data);
   }
 }

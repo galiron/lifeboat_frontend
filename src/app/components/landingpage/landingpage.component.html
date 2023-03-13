@@ -1,13 +1,14 @@
 <div style="display:flex; flex-flow: column; align-items: center; justify-content: center; height: 100%;">
-    <form (submit)="$event.preventDefault()" style="display:flex; flex-flow: column; align-items: center; justify-content: center; height: 100%;">
-        <mat-form-field appearance="fill" style="width: 20rem">
-            <mat-label>Please enter your Name and/or affiliation</mat-label>
-            <input matInput #formName type="text">
-        </mat-form-field>
-        <mat-form-field appearance="fill" style="width: 20rem">
-            <mat-label>Password</mat-label>
-            <input matInput #formPassword type="password">
-        </mat-form-field>
-        <button (click)="setNameAndContinue()" style="margin-left: 10px;" color="primary" mat-raised-button>Submit</button>
-    </form>
+  <form (submit)="$event.preventDefault()"
+        style="display:flex; flex-flow: column; align-items: center; justify-content: center; height: 100%;">
+    <mat-form-field appearance="fill" style="width: 20rem">
+      <mat-label>Username</mat-label>
+      <input #formName matInput type="text">
+    </mat-form-field>
+    <mat-form-field appearance="fill" style="width: 20rem">
+      <mat-label>Password</mat-label>
+      <input #formPassword matInput type="password">
+    </mat-form-field>
+    <button (click)="setNameAndContinue()" color="primary" mat-raised-button style="margin-left: 10px;">Login</button>
+  </form>
 </div>

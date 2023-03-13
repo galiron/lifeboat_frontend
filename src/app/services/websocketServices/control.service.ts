@@ -7,14 +7,14 @@ import {BackendAPIService} from './backend-api.service';
 })
 export class ControlService {
 
-  constructor(private websocketAPIService: BackendAPIService) {
+  constructor(private backendAPIService: BackendAPIService) {
   }
 
   sendThrottle(changeContext: ChangeContext): void {
-    this.websocketAPIService.sendThrottle(changeContext.value);
+    this.backendAPIService.sendThrottle(changeContext.value);
   }
 
   sendSteering(changeContext: ChangeContext): void {
-    this.websocketAPIService.sendSteering(changeContext.value);
+    this.backendAPIService.sendSteering(changeContext.value);
   }
 }
