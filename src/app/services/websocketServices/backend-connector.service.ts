@@ -11,6 +11,7 @@ import {
   WSRequestControlTransferToClient,
   WSVigilanceFeedResponse
 } from "src/app/interfaces/Interfaces";
+import { ConfigService } from "../dataServices/config.service";
 
 @Injectable({
   providedIn: 'root'
@@ -25,9 +26,10 @@ export class BackendConnectorService {
   wsConnectionEstablished$ = new BehaviorSubject<boolean>(false);
   wsConnectionState$ = new BehaviorSubject<string>(ConnectionState.DISCONNECTED);
   wSVigilanceFeedResponse$ = new Subject<WSVigilanceFeedResponse>();
-  private socket = io("http://localhost:3000");
+  private socket;
 
-  constructor() {
+  constructor(private configurationService: ConfigService) {
+    this.socket = io(configurationService.config.hostUrl)
     this.socket.on("connect", () => {
       this.wsConnectionEstablished$.next(true);
       this.wsConnectionState$.next(ConnectionState.CONNECTED_WITHOUT_CONTROL);

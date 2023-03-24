@@ -11,8 +11,8 @@ import {BackendConnectorService} from 'src/app/services/websocketServices/backen
 })
 export class LoadingpageComponent {
 
-  private backendServiceConnectionEstablished: boolean = false;
-  private cameraServiceConnectionEstablished: boolean = false;
+  backendServiceConnectionEstablished: boolean = false;
+  cameraServiceConnectionEstablished: boolean = false;
   private alreadyConnected = false;
 
   constructor(private websocketConnectorService: BackendConnectorService, private cameraWebsocketService: CameraWebsocketService, private router: Router) {

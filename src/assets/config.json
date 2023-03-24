@@ -1,3 +1,4 @@
 {
-    "wsUrl" : "wss://seamantics.ahoyrtc.com/1f3ca3c3c6580a07fca62e18c2d6f325802b681a"
+    "wsURL" : "wss://seamantics.ahoyrtc.com/1f3ca3c3c6580a07fca62e18c2d6f325802b681a",
+    "hostUrl" : "http://localhost:3010"
 }

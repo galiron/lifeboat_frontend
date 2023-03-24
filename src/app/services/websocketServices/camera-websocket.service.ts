@@ -18,7 +18,7 @@ export class CameraWebsocketService {
 
   constructor(private configService: ConfigService) {
     var iceCandidates: any = [];
-    this.ws = new WebSocket(configService.config.wsUrl, "rtc-api-protocol");
+    this.ws = new WebSocket(configService.config.wsURL, "rtc-api-protocol");
 
     this.ws.onopen = () => {
       console.log("onopen!");
