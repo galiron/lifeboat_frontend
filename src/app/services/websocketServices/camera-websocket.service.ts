@@ -11,7 +11,7 @@ import {ConfigService} from '../dataServices/config.service';
 export class CameraWebsocketService {
 
   videos$ = new Subject<any>();
-  ws: WebSocket; //= new WebSocket(this.wsUrl, "rtc-api-protocol");
+  ws: WebSocket;
   callbackList: any = {};
   isReady$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private streams: Array<Stream> = new Array<Stream>;
